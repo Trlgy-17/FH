@@ -29,6 +29,7 @@ export interface ProcessStepItem {
   subtitle: string;
   description: string;
   details: string[];
+  footnote?: string;
 }
 
 export interface FaqItem {
