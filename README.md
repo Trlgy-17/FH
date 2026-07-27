@@ -1,0 +1,128 @@
+# FULLHOME ID — Landing Page
+
+Official production landing page for **FULLHOME ID**, an interior design and build studio specializing in **Warm Minimal Luxury** aesthetics.
+
+---
+
+## 🛠 Technology Stack
+
+- **Framework**: Next.js (App Router) with React 19 & TypeScript Strict Mode
+- **Styling**: Tailwind CSS with custom CSS Variables (`globals.css`)
+- **Typography**: `next/font` (`EB Garamond` for headings, `Plus Jakarta Sans` for body & UI)
+- **Animation**: Motion (`framer-motion`) with `prefers-reduced-motion` compliance
+- **Form & Validation**: React Hook Form + Zod + `@hookform/resolvers`
+- **Iconography**: Lucide React (individual tree-shakable imports)
+- **Testing**: Playwright E2E Test Suite
+- **Package Manager**: pnpm
+
+---
+
+## 📁 Project Architecture
+
+```text
+src/
+├── app/
+│   ├── api/
+│   │   └── contact/
+│   │       └── route.ts          # Server-side Zod validation handler
+│   ├── globals.css               # Design system tokens & CSS variables
+│   ├── layout.tsx                # Root layout, fonts, JSON-LD, Metadata
+│   ├── page.tsx                  # Main App Router landing page
+│   ├── loading.tsx               # Skeleton loading UI
+│   ├── not-found.tsx             # 404 Error page
+│   ├── sitemap.ts                # Sitemap XML generator
+│   ├── robots.ts                 # Robots.txt generator
+│   └── manifest.ts               # PWA Web App Manifest
+├── components/
+│   ├── layout/
+│   │   ├── header.tsx            # Sticky header & announcement bar
+│   │   ├── footer.tsx            # Editorial footer
+│   │   └── mobile-nav.tsx        # Drawer menu with Escape keyboard trap
+│   ├── sections/
+│   │   ├── hero-section.tsx      # Priority visual, H1, WhatsApp CTA
+│   │   ├── trust-section.tsx     # 4 value proposition pillars
+│   │   ├── services-section.tsx  # Core interior services & features
+│   │   ├── portfolio-section.tsx # Editorial grid & category filters
+│   │   ├── process-section.tsx   # 8-step interior workflow
+│   │   ├── about-section.tsx     # Brand philosophy & material story
+│   │   ├── testimonials-section.tsx # Conditional render for verified data
+│   │   ├── faq-section.tsx       # Accessible WAI-ARIA accordion
+│   │   ├── contact-section.tsx   # Zod form with instant WhatsApp link
+│   │   └── final-cta-section.tsx # High-impact conversion callout
+│   ├── shared/
+│   │   ├── section-heading.tsx   # Typography section header
+│   │   ├── whatsapp-button.tsx   # Floating & inline WhatsApp buttons
+│   │   └── reveal.tsx            # Reduced-motion aware animation wrapper
+│   └── ui/
+│       ├── button.tsx            # Styled pill buttons
+│       ├── accordion.tsx         # WAI-ARIA compliant accordion
+│       ├── input.tsx             # Accessible form input
+│       ├── textarea.tsx          # Accessible form textarea
+│       └── select.tsx            # Custom select field
+├── config/
+│   └── site.ts                   # Centralized brand & nav settings
+├── data/
+│   ├── services.ts               # Services dataset
+│   ├── portfolio.ts              # Portfolio showcase dataset
+│   ├── process.ts                # 8-step workflow dataset
+│   └── faq.ts                    # FAQ dataset
+├── lib/
+│   ├── utils.ts                  # Tailwind class merger (cn)
+│   ├── whatsapp.ts               # WhatsApp URL formatter
+│   └── validations/
+│       └── contact.ts            # Zod contact schema
+└── types/
+    └── index.ts                  # Core TypeScript types
+```
+
+---
+
+## ⚡ Getting Started & Development
+
+### 1. Environment Configuration
+
+Copy `.env.example` to `.env.local`:
+
+```bash
+cp .env.example .env.local
+```
+
+Variables:
+```env
+NEXT_PUBLIC_SITE_URL=https://fullhome.id
+NEXT_PUBLIC_WHATSAPP_NUMBER=6281234567890
+NEXT_PUBLIC_WHATSAPP_DEFAULT_MESSAGE="Halo FULLHOME ID, Saya ingin berkonsultasi mengenai kebutuhan interior."
+```
+
+### 2. Run Development Server
+
+```bash
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser.
+
+---
+
+## 🧪 Validation & Testing Commands
+
+Run strict quality checks:
+
+```bash
+# Typecheck
+pnpm typecheck
+
+# Production Build
+pnpm build
+
+# Playwright E2E Suite
+pnpm test
+```
+
+---
+
+## 🎨 Design System Summary
+
+- **Palette**: Warm Ivory background (`#fdf9f3`), Charcoal Brown (`#0f0d0a`), Walnut Accent (`#745943`), Soft White (`#FFFEFC`), Light Taupe border (`#D8CEC2`).
+- **Typography**: EB Garamond (Headline Serif) paired with Plus Jakarta Sans (Body & UI).
+- **Accessibility**: Keyboard focus rings, screen-reader friendly labels, ARIA expansion states, and `prefers-reduced-motion` compliance.

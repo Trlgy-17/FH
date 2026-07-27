@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #fdf9f3;
+  --foreground: #1c1c18;
+  --card: #FFFEFC;
+  --card-foreground: #1c1c18;
+  --popover: #FFFEFC;
+  --popover-foreground: #1c1c18;
+  --primary: #0f0d0a;
+  --primary-foreground: #ffffff;
+  --secondary: #745943;
+  --secondary-foreground: #ffffff;
+  --muted: #f1ede7;
+  --muted-foreground: #6F6A63;
+  --accent: #745943;
+  --accent-foreground: #ffffff;
+  --destructive: #ba1a1a;
+  --destructive-foreground: #ffffff;
+  --border: #D8CEC2;
+  --input: #D8CEC2;
+  --ring: #745943;
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground antialiased font-sans selection:bg-light-taupe selection:text-primary;
+  }
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Reduced motion fallback */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
