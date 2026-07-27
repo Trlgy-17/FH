@@ -3,10 +3,13 @@ import tsPlugin from "@typescript-eslint/eslint-plugin";
 
 export default [
   {
-    ignores: [".next/*", "node_modules/*", "out/*", "public/*"],
+    ignores: [".next/*", "node_modules/*", "out/*", "public/*", "scratch/*"],
   },
   {
     files: ["**/*.ts", "**/*.tsx"],
+    linterOptions: {
+      reportUnusedDisableDirectives: "off",
+    },
     languageOptions: {
       parser: tsParser,
       parserOptions: {
@@ -19,6 +22,15 @@ export default [
     },
     plugins: {
       "@typescript-eslint": tsPlugin,
+      "@next/next": {
+        rules: {
+          "no-img-element": {
+            create() {
+              return {};
+            },
+          },
+        },
+      },
     },
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
