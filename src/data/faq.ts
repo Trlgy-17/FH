@@ -3,44 +3,32 @@ import { FaqItem } from "@/types";
 export const faqData: FaqItem[] = [
   {
     id: "faq-1",
-    question: "Apa saja tahapan awal untuk mulai berkonsultasi dengan FULLHOME ID?",
+    question: "Apa saja cakupan wilayah operasional layanan FULLHOME ID?",
     answer:
-      "Anda dapat memulai dengan menghubungi tim kami melalui tombol WhatsApp atau mengisi formulir konsultasi di website ini. Kami akan menjadwalkan sesi diskusi awal untuk mendengarkan kebutuhan ruang, preferensi estetika, dan lokasi proyek Anda.",
+      "Kami melayani proyek interior untuk area Jabodetabek dan kota-kota besar di Pulau Jawa & Bali. Untuk lokasi di luar area tersebut, silakan konsultasikan terlebih dahulu dengan tim kami agar kami dapat menyesuaikan jadwal survei dan kebutuhan proyek.",
   },
   {
     id: "faq-2",
-    question: "Apakah FULLHOME ID melayani pengerjaan di luar area Jabodetabek?",
+    question: "Berapa lama estimasi waktu pengerjaan sebuah proyek interior?",
     answer:
-      "Fokus utama area layanan kami adalah Jabodetabek dan sekitarnya. Namun, untuk proyek hunian atau ruang komersial skala tertentu di luar wilayah tersebut, kami terbuka untuk diskusi teknis dan survey khusus.",
+      "Durasi pengerjaan bergantung pada jenis pekerjaan dan skala proyek. Secara umum, proses dimulai dari konsultasi & estimasi awal, dilanjutkan survei lokasi, desain 2D, pengembangan desain 3D setelah deposit, produksi, hingga instalasi.\n\nEstimasi produksi umumnya 14–21 hari kerja, sedangkan proyek dengan lingkup lebih besar dapat memerlukan waktu yang disesuaikan. Jadwal pengerjaan akan kami informasikan secara jelas sebelum produksi dimulai.",
   },
   {
     id: "faq-3",
-    question: "Berapa lama estimasi durasi dari tahap desain hingga pengerjaan selesai?",
+    question: "Apakah FULLHOME ID dapat mengerjakan proyek dengan anggaran tertentu?",
     answer:
-      "Tahap perancangan desain 3D umumnya membutuhkan waktu 2 hingga 4 minggu tergantung pada skala dan luas ruangan. Setelah persetujuan RAB, proses produksi furnitur di workshop dan instalasi lapangan berkisar antara 4 hingga 8 minggu.",
+      "Tentu. Kami akan menyesuaikan konsep desain, pemilihan material, dan spesifikasi sesuai dengan anggaran yang telah Anda siapkan tanpa mengurangi fungsi maupun kualitas hasil akhir. Pada tahap konsultasi awal, tim kami akan memberikan estimasi biaya agar Anda memiliki gambaran yang jelas sebelum melanjutkan ke tahap berikutnya.",
   },
   {
     id: "faq-4",
-    question: "Bagaimana sistem perhitungan biaya desain dan pengerjaan interior?",
+    question: "Bagaimana proses pembayaran dan garansi pekerjaan di FULLHOME ID?",
     answer:
-      "Perhitungan biaya bersifat transparan dan disesuaikan dengan luas ruangan, tingkat kerumitan desain, serta pilihan spesifikasi material. Setelah survey dan konsep 2D disetujui, kami menyajikan Rencana Anggaran Biaya (RAB) terperinci tanpa biaya tersembunyi.",
+      "Pembayaran dilakukan secara bertahap agar proses proyek lebih aman dan transparan.\n\nDP 50% setelah desain dan penawaran harga disetujui sebagai tanda dimulainya produksi.\nTermin kedua dibayarkan saat progres produksi mencapai sekitar 40%, disertai update progres dari tim kami.\nPelunasan dilakukan setelah seluruh proses instalasi selesai sesuai ruang lingkup pekerjaan yang telah disepakati.\n\nSeluruh harga sudah termasuk proses produksi hingga instalasi di lokasi, sehingga Anda tidak perlu mencari tim pemasangan terpisah. Kami juga memberikan garansi pengerjaan hingga 6 bulan sebagai bentuk komitmen terhadap kualitas hasil yang kami kerjakan.",
   },
   {
     id: "faq-5",
-    question: "Bisakah berkonsultasi jika saya sudah memiliki sketsa atau denah sendiri?",
+    question: "Apakah bisa memesan custom furniture tanpa renovasi penuh ruangan FULLHOME ID?",
     answer:
-      "Tentu saja. Kami sangat menyambut jika Anda sudah memiliki ide awal, denah dari pengembang, atau moodboard referensi. Tim kami akan membantu mengoptimalkan fungsi dan estetikanya sesuai karakter Warm Minimal Luxury.",
-  },
-  {
-    id: "faq-6",
-    question: "Apakah ada garansi untuk hasil pengerjaan furnitur kustom dan instalasi?",
-    answer:
-      "Ya, setiap pekerjaan renovasi dan furnitur kustom FULLHOME ID dilengkapi dengan jaminan pemeliharaan (garansi pengerjaan) setelah serah terima kunci untuk memastikan seluruh aksesoris dan material berfungsi dengan sempurna.",
-  },
-  {
-    id: "faq-7",
-    question: "Bagaimana proses revisi pada tahap visualisasi 3D?",
-    answer:
-      "Kami memberikan sesi revisi terstruktur pada tahap pengembangan visual 3D untuk memastikan setiap detail tekstur, warna, dan pencahayaan sudah sesuai 100% dengan ekspektasi Anda sebelum masuk ke tahap produksi.",
+      "Bisa. Anda dapat memesan berbagai kebutuhan custom furniture seperti kitchen set, wardrobe, TV cabinet, meja kerja, vanity, maupun furniture built-in lainnya tanpa harus melakukan renovasi keseluruhan ruangan. Tim kami tetap akan melakukan survei, pengukuran, proses desain, produksi, hingga instalasi agar hasilnya presisi dan sesuai dengan kebutuhan ruang Anda.",
   },
 ];

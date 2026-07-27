@@ -52,7 +52,7 @@ export function AccordionItem({
         )}
       >
         <div className="overflow-hidden">
-          <p>{answer}</p>
+          <p className="whitespace-pre-line">{answer}</p>
         </div>
       </div>
     </div>
