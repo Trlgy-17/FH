@@ -48,7 +48,7 @@ export const processStepsData: ProcessStepItem[] = [
     description:
       "Produk yang telah selesai diproduksi dipasang langsung oleh tim profesional di lokasi proyek. Setelah instalasi selesai, dilakukan pengecekan kualitas bersama sebelum proses serah terima. Seluruh pekerjaan sudah termasuk instalasi dan garansi pengerjaan hingga 6 bulan.",
     details: [
-      "Instalasi oleh Tim Nacira Studio",
+      "Instalasi oleh Tim FULLHOME ID",
       "Quality Control & Finishing",
       "Serah Terima Proyek",
       "Garansi Pengerjaan Hingga 6 Bulan",
