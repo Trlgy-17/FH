@@ -5,7 +5,6 @@ import path from "path";
 const KONTEN_ROOT = "F:\\KONTEN";
 
 // WHITELIST: only these exact folder names are valid category folders.
-// Anything else at the same level is ignored (could be stray project folders).
 export const CATEGORY_MAP: Record<string, string> = {
   "BEDROOM": "Bedroom",
   "KITCHENSET": "Kitchen Set",
@@ -26,7 +25,6 @@ export const CATEGORY_MAP: Record<string, string> = {
 };
 
 // Categories that have STYLE subfolders instead of client subfolders.
-// These are treated as a single merged category (all images counted together).
 export const STYLE_CATEGORIES = new Set(["KITCHENSET"]);
 
 export const VALID_CAT_NAMES = new Set(Object.keys(CATEGORY_MAP));
@@ -43,6 +41,43 @@ export function normalizeCat(raw: string): string {
 
 export function slugify(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+/**
+ * Data Validation Skill: Validates category and project naming based on actual content
+ */
+export function getValidatedProjectInfo(
+  parentCat: string,
+  subfolderName: string,
+  relativePath: string
+) {
+  const normPath = relativePath.replace(/\\/g, '/').toLowerCase();
+
+  // Data Validation override: 'kitchenset/semiklasik' is actually a Wardrobe category
+  if (normPath.includes('kitchenset/semiklasik')) {
+    return {
+      categorySlug: 'wardrobe',
+      categoryLabel: 'Wardrobe',
+      projectName: 'Wardrobe – Semiklasik'
+    };
+  }
+
+  // Default mappings based on parent category folder name
+  const label = normalizeCat(parentCat);
+  const slug = slugify(label);
+
+  // Clean and format default project name
+  let formattedName = subfolderName;
+  if (STYLE_CATEGORIES.has(parentCat)) {
+    const styleName = subfolderName.charAt(0).toUpperCase() + subfolderName.slice(1).toLowerCase();
+    formattedName = `${label} – ${styleName}`;
+  }
+
+  return {
+    categorySlug: slug,
+    categoryLabel: label,
+    projectName: formattedName
+  };
 }
 
 function countImages(dir: string): number {
@@ -74,19 +109,41 @@ export async function GET() {
       });
 
       for (const cat of catFolders) {
-        // ✅ WHITELIST CHECK — skip any folder that is not a known category
         if (!VALID_CAT_NAMES.has(cat)) continue;
 
-        const label = normalizeCat(cat);
-        const slug  = slugify(label);
         const catPath = path.join(yearPath, cat);
-        const imgCount = countImages(catPath);
 
-        const existing = catMap.get(slug);
-        if (existing) {
-          existing.count += imgCount;
+        // Scan subfolders to validate individually
+        const subDirs = fs.readdirSync(catPath).filter((d) => {
+          try { return fs.statSync(path.join(catPath, d)).isDirectory(); } catch { return false; }
+        });
+
+        if (subDirs.length === 0) {
+          const imgCount = countImages(catPath);
+          const label = normalizeCat(cat);
+          const slug  = slugify(label);
+          
+          const existing = catMap.get(slug);
+          if (existing) {
+            existing.count += imgCount;
+          } else {
+            catMap.set(slug, { label, count: imgCount });
+          }
         } else {
-          catMap.set(slug, { label, count: imgCount });
+          for (const subDir of subDirs) {
+            const subDirPath = path.join(catPath, subDir);
+            const imgCount = countImages(subDirPath);
+            const relPath = path.join(yr, cat, subDir);
+            
+            const validated = getValidatedProjectInfo(cat, subDir, relPath);
+            
+            const existing = catMap.get(validated.categorySlug);
+            if (existing) {
+              existing.count += imgCount;
+            } else {
+              catMap.set(validated.categorySlug, { label: validated.categoryLabel, count: imgCount });
+            }
+          }
         }
       }
     }

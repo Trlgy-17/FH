@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import {
-  CATEGORY_MAP,
   VALID_CAT_NAMES,
   STYLE_CATEGORIES,
+  getValidatedProjectInfo,
   normalizeCat,
   slugify,
 } from "../categories/route";
@@ -100,102 +100,77 @@ export async function GET(req: NextRequest) {
       });
 
       for (const cat of catFolders) {
-        // ✅ WHITELIST CHECK — only process known category folders
         if (!VALID_CAT_NAMES.has(cat)) continue;
-
-        const catLabel = normalizeCat(cat);
-        const catSlug  = slugify(catLabel);
-
-        if (category !== "all" && catSlug !== category) continue;
 
         const catPath = path.join(yearPath, cat);
 
-        // ── Special handling: "Before after" has images directly (no subfolders)
-        //    Treat the whole folder as ONE project
         const subDirs = fs.readdirSync(catPath).filter((d) => {
           try { return fs.statSync(path.join(catPath, d)).isDirectory(); } catch { return false; }
         });
 
         if (subDirs.length === 0) {
-          // No subfolders → all images are directly in the category folder
           const imgCount = countImages(catPath);
           if (imgCount === 0) continue;
 
           const firstImg = findFirstImage(catPath);
           if (!firstImg) continue;
 
-          const projName = catLabel; // Use category name as project name
-          if (search && !projName.toLowerCase().includes(search) && !catLabel.toLowerCase().includes(search)) continue;
+          const label = normalizeCat(cat);
+          const slug  = slugify(label);
+          const projName = label;
+
+          if (category !== "all" && slug !== category) continue;
+          if (search && !projName.toLowerCase().includes(search) && !label.toLowerCase().includes(search)) continue;
 
           const projId  = Buffer.from(catPath).toString("base64url");
           const coverId = Buffer.from(firstImg).toString("base64url");
           projects.push({
             id: projId,
             name: projName,
-            category: catSlug,
-            categoryLabel: catLabel,
+            category: slug,
+            categoryLabel: label,
             coverSrc: `/api/portfolio/image?p=${coverId}`,
             imageCount: imgCount,
           });
           continue;
         }
 
-        // ── KITCHENSET (and similar) have STYLE subfolders, not client subfolders.
-        //    Merge all style subfolders into ONE project per style.
-        if (STYLE_CATEGORIES.has(cat)) {
-          for (const style of subDirs) {
-            const stylePath = path.join(catPath, style);
-            const imgCount  = countImages(stylePath);
-            if (imgCount === 0) continue;
-
-            const firstImg = findFirstImage(stylePath);
-            if (!firstImg) continue;
-
-            // Format style name (MINIMALIS → Minimalis)
-            const styleName = style.charAt(0).toUpperCase() + style.slice(1).toLowerCase();
-            const projName  = `${catLabel} – ${styleName}`;
-
-            if (search && !projName.toLowerCase().includes(search) && !catLabel.toLowerCase().includes(search) && !style.toLowerCase().includes(search)) continue;
-
-            const projId  = Buffer.from(stylePath).toString("base64url");
-            const coverId = Buffer.from(firstImg).toString("base64url");
-            projects.push({
-              id: projId,
-              name: projName,
-              category: catSlug,
-              categoryLabel: catLabel,
-              coverSrc: `/api/portfolio/image?p=${coverId}`,
-              imageCount: imgCount,
-            });
-          }
-          continue;
-        }
-
-        // ── Standard case: each subfolder is a client/project folder
-        for (const proj of subDirs) {
-          const projName = formatProjectName(proj);
-          const projPath = path.join(catPath, proj);
-
-          if (
-            search &&
-            !projName.toLowerCase().includes(search) &&
-            !catLabel.toLowerCase().includes(search) &&
-            !proj.toLowerCase().includes(search)
-          ) continue;
-
+        // Style subfolders or standard project subfolders
+        for (const subDir of subDirs) {
+          const projPath = path.join(catPath, subDir);
           const imgCount = countImages(projPath);
           if (imgCount === 0) continue;
 
           const firstImg = findFirstImage(projPath);
           if (!firstImg) continue;
 
+          const relPath = path.join(yr, cat, subDir);
+          const validated = getValidatedProjectInfo(cat, subDir, relPath);
+
+          // Category filter check
+          if (category !== "all" && validated.categorySlug !== category) continue;
+
+          // Project name format (Standard client vs validated style name)
+          let finalProjName = validated.projectName;
+          if (!STYLE_CATEGORIES.has(cat) && !relPath.toLowerCase().includes('kitchenset/semiklasik')) {
+            finalProjName = formatProjectName(subDir);
+          }
+
+          // Search query check
+          if (
+            search &&
+            !finalProjName.toLowerCase().includes(search) &&
+            !validated.categoryLabel.toLowerCase().includes(search) &&
+            !subDir.toLowerCase().includes(search)
+          ) continue;
+
           const projId  = Buffer.from(projPath).toString("base64url");
           const coverId = Buffer.from(firstImg).toString("base64url");
           projects.push({
             id: projId,
-            name: projName,
-            category: catSlug,
-            categoryLabel: catLabel,
+            name: finalProjName,
+            category: validated.categorySlug,
+            categoryLabel: validated.categoryLabel,
             coverSrc: `/api/portfolio/image?p=${coverId}`,
             imageCount: imgCount,
           });
