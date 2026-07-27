@@ -59,7 +59,7 @@ export function Header() {
           >
             <div className="relative w-10 h-10 md:w-11 md:h-11 rounded-full overflow-hidden border border-light-taupe/60 bg-soft-white/90 shadow-xs shrink-0 group-hover:scale-105 group-hover:border-secondary transition-all duration-300">
               <Image
-                src="/logo.png"
+                src="/logo-v3.png"
                 alt="FULLHOME ID Logo"
                 fill
                 sizes="44px"

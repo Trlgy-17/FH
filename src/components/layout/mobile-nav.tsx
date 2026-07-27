@@ -50,7 +50,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
         <div className="flex items-center gap-3">
           <div className="relative w-9 h-9 rounded-full overflow-hidden border border-light-taupe/60 bg-soft-white/90 shadow-xs shrink-0">
             <Image
-              src="/logo.png"
+              src="/logo-v3.png"
               alt="FULLHOME ID Logo"
               fill
               sizes="36px"
