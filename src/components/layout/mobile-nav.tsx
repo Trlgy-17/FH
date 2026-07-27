@@ -47,14 +47,14 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
     <div className="fixed inset-0 z-50 md:hidden flex flex-col bg-background/98 backdrop-blur-xl transition-all duration-300">
       {/* Top bar inside drawer */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-light-taupe/30">
-        <div className="flex items-center gap-3">
-          <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-primary/20 shrink-0 bg-primary">
+        <div className="flex items-center gap-2.5">
+          <div className="relative w-7 h-7 shrink-0">
             <Image
               src="/logo.png"
               alt="FULLHOME ID Logo"
               fill
-              sizes="32px"
-              className="object-cover"
+              sizes="28px"
+              className="object-contain"
             />
           </div>
           <span className="font-serif text-xl font-medium tracking-tight text-primary">

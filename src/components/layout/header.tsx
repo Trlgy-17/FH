@@ -55,15 +55,15 @@ export function Header() {
           {/* Logo */}
           <Link
             href="/"
-            className="group flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-secondary rounded-sm"
+            className="group flex items-center gap-2.5 sm:gap-3 focus:outline-none focus:ring-2 focus:ring-secondary rounded-sm"
           >
-            <div className="relative w-9 h-9 md:w-10 md:h-10 rounded-xl overflow-hidden shadow-xs border border-primary/20 shrink-0 group-hover:scale-105 transition-transform duration-300 bg-primary">
+            <div className="relative w-8 h-8 md:w-9 md:h-9 shrink-0 group-hover:scale-105 transition-transform duration-300">
               <Image
                 src="/logo.png"
                 alt="FULLHOME ID Logo"
                 fill
-                sizes="40px"
-                className="object-cover"
+                sizes="36px"
+                className="object-contain"
                 priority
               />
             </div>

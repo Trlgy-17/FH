@@ -11,14 +11,14 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 pb-12 border-b border-light-taupe/30">
           {/* Brand Col */}
           <div className="md:col-span-5 flex flex-col gap-4">
-            <a href="#" className="flex items-center gap-3 w-fit group">
-              <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-xs border border-primary/20 shrink-0 bg-primary">
+            <a href="#" className="flex items-center gap-2.5 sm:gap-3 w-fit group">
+              <div className="relative w-9 h-9 shrink-0 group-hover:scale-105 transition-transform duration-300">
                 <Image
                   src="/logo.png"
                   alt="FULLHOME ID Logo"
                   fill
-                  sizes="40px"
-                  className="object-cover"
+                  sizes="36px"
+                  className="object-contain"
                 />
               </div>
               <div className="flex flex-col">
