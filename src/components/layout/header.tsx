@@ -57,13 +57,13 @@ export function Header() {
             href="/"
             className="group flex items-center gap-3 sm:gap-3.5 focus:outline-none focus:ring-2 focus:ring-secondary rounded-full"
           >
-            <div className="relative w-11 h-11 md:w-12 md:h-12 rounded-full overflow-hidden border border-primary/25 bg-white shadow-xs shrink-0 group-hover:scale-105 group-hover:border-secondary transition-all duration-300">
+            <div className="relative w-10 h-10 md:w-11 md:h-11 rounded-full overflow-hidden border border-light-taupe/60 bg-soft-white/90 shadow-xs shrink-0 group-hover:scale-105 group-hover:border-secondary transition-all duration-300">
               <Image
                 src="/logo.png"
                 alt="FULLHOME ID Logo"
                 fill
-                sizes="48px"
-                className="object-cover rounded-full"
+                sizes="44px"
+                className="object-contain p-1.5"
                 priority
               />
             </div>
