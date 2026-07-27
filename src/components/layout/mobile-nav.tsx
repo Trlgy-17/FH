@@ -48,13 +48,13 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
       {/* Top bar inside drawer */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-light-taupe/30">
         <div className="flex items-center gap-3">
-          <div className="relative w-9 h-9 rounded-full overflow-hidden border border-light-taupe/60 bg-white p-1 shadow-xs shrink-0">
+          <div className="relative w-9 h-9 rounded-full overflow-hidden border border-primary/25 bg-white shadow-xs shrink-0">
             <Image
               src="/logo.png"
               alt="FULLHOME ID Logo"
               fill
               sizes="36px"
-              className="object-contain rounded-full"
+              className="object-cover rounded-full"
             />
           </div>
           <span className="font-serif text-xl font-medium tracking-tight text-primary">
