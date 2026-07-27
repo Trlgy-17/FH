@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { siteConfig } from "@/config/site";
 import { ArrowUpRight } from "lucide-react";
 
@@ -10,13 +11,24 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 pb-12 border-b border-light-taupe/30">
           {/* Brand Col */}
           <div className="md:col-span-5 flex flex-col gap-4">
-            <a href="#" className="flex flex-col w-fit">
-              <span className="font-serif text-3xl font-medium tracking-tight text-primary">
-                FULLHOME ID
-              </span>
-              <span className="font-sans text-xs text-warm-gray tracking-widest uppercase mt-0.5">
-                Editorial Minimalism Studio
-              </span>
+            <a href="#" className="flex items-center gap-3 w-fit group">
+              <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-xs border border-primary/20 shrink-0 bg-primary">
+                <Image
+                  src="/logo.png"
+                  alt="FULLHOME ID Logo"
+                  fill
+                  sizes="40px"
+                  className="object-cover"
+                />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-serif text-2xl font-medium tracking-tight text-primary group-hover:text-secondary transition-colors leading-none">
+                  FULLHOME ID
+                </span>
+                <span className="font-sans text-[10px] text-warm-gray tracking-widest uppercase mt-1">
+                  Editorial Minimalism Studio
+                </span>
+              </div>
             </a>
             <p className="font-sans text-sm text-warm-gray leading-relaxed max-w-sm">
               Mewujudkan interior custom bernuansa hangat, fungsional, dan presisi tinggi untuk hunian serta ruang komersial di Jabodetabek dan sekitarnya.

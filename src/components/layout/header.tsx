@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import Image from "next/image";
+
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -53,14 +55,26 @@ export function Header() {
           {/* Logo */}
           <Link
             href="/"
-            className="group flex flex-col focus:outline-none focus:ring-2 focus:ring-secondary rounded-sm"
+            className="group flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-secondary rounded-sm"
           >
-            <span className="font-serif text-2xl md:text-3xl font-medium tracking-tight text-primary group-hover:text-secondary transition-colors">
-              FULLHOME ID
-            </span>
-            <span className="font-sans text-[10px] text-warm-gray tracking-widest uppercase -mt-1">
-              Interior Studio
-            </span>
+            <div className="relative w-9 h-9 md:w-10 md:h-10 rounded-xl overflow-hidden shadow-xs border border-primary/20 shrink-0 group-hover:scale-105 transition-transform duration-300 bg-primary">
+              <Image
+                src="/logo.png"
+                alt="FULLHOME ID Logo"
+                fill
+                sizes="40px"
+                className="object-cover"
+                priority
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-serif text-xl md:text-2xl font-medium tracking-tight text-primary group-hover:text-secondary transition-colors leading-none">
+                FULLHOME ID
+              </span>
+              <span className="font-sans text-[9px] md:text-[10px] text-warm-gray tracking-widest uppercase mt-1">
+                Interior Studio
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Nav */}

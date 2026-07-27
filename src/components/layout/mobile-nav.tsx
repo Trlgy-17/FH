@@ -7,6 +7,8 @@ import { buildWhatsAppLink } from "@/lib/whatsapp";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import Image from "next/image";
+
 interface MobileNavProps {
   isOpen: boolean;
   onClose: () => void;
@@ -45,9 +47,20 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
     <div className="fixed inset-0 z-50 md:hidden flex flex-col bg-background/98 backdrop-blur-xl transition-all duration-300">
       {/* Top bar inside drawer */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-light-taupe/30">
-        <span className="font-serif text-xl font-medium tracking-tight text-primary">
-          FULLHOME ID
-        </span>
+        <div className="flex items-center gap-3">
+          <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-primary/20 shrink-0 bg-primary">
+            <Image
+              src="/logo.png"
+              alt="FULLHOME ID Logo"
+              fill
+              sizes="32px"
+              className="object-cover"
+            />
+          </div>
+          <span className="font-serif text-xl font-medium tracking-tight text-primary">
+            FULLHOME ID
+          </span>
+        </div>
         <button
           type="button"
           onClick={onClose}
