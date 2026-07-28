@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { Reveal } from "@/components/shared/reveal";
-import { ArrowUpRight, MapPin } from "lucide-react";
+import { ArrowUpRight, MapPin, Images } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ProjectModal, type Project } from "@/components/shared/project-modal";
 import { AnimatePresence } from "framer-motion";
+import Link from "next/link";
 
 interface Category {
   id: string;
@@ -22,7 +23,6 @@ export function PortfolioSection() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   useEffect(() => {
-    // Fetch categories dynamically
     fetch("/api/portfolio/categories")
       .then((r) => r.json())
       .then((d) => setCategories(d.categories ?? []))
@@ -34,7 +34,6 @@ export function PortfolioSection() {
     fetch(`/api/portfolio/projects?category=${selectedCategory}&page=1`)
       .then((r) => r.json())
       .then((d) => {
-        // Slice top 5 projects for homepage asymmetry grid
         setProjects((d.projects ?? []).slice(0, 5));
       })
       .catch((err) => console.error("Projects fetch error:", err))
@@ -42,30 +41,30 @@ export function PortfolioSection() {
   }, [selectedCategory]);
 
   return (
-    <section id="portfolio" className="py-16 md:py-24 bg-surface-container-low/40 border-y border-light-taupe/30">
-      <div className="max-w-container-max mx-auto px-6 md:px-8">
+    <section id="portfolio" className="py-20 md:py-32 bg-black/[0.02] dark:bg-white/[0.02] border-y border-foreground/10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8">
         <Reveal>
           <SectionHeading
-            eyebrow="Karya Terpilih"
+            eyebrow="KARYA TERPILIH"
             title="Portofolio Interior & Build"
-            subtitle="Jelajahi kurasi hasil pengerjaan interior kami yang mengusung karakter Warm Minimal Luxury."
+            subtitle="Jelajahi kurasi dokumentasi pengerjaan proyek interior kami di Jabodetabek, Jawa & Bali."
           />
         </Reveal>
 
-        {/* Category Filters */}
+        {/* Category Pill Filters */}
         <Reveal delay={0.1}>
-          <div className="flex flex-wrap items-center justify-center gap-2.5 md:gap-3 mt-8 md:mt-10 mb-12">
+          <div className="flex flex-wrap items-center justify-center gap-2.5 md:gap-3 mt-8 md:mt-12 mb-14">
             <button
               type="button"
               onClick={() => setSelectedCategory("all")}
               className={cn(
-                "font-sans text-xs md:text-sm font-semibold px-5 py-2.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-secondary",
+                "font-sans text-xs md:text-sm font-medium px-5 py-2.5 rounded-full transition-all duration-300 focus:outline-none",
                 selectedCategory === "all"
-                  ? "bg-primary text-soft-white shadow-sm scale-105"
-                  : "bg-soft-white text-warm-gray border border-light-taupe/50 hover:bg-surface-container hover:text-primary"
+                  ? "bg-primary text-white shadow-sm scale-105"
+                  : "bg-background text-warm-gray border border-foreground/10 hover:bg-black/5 hover:text-primary"
               )}
             >
-              Semua
+              Semua Proyek
             </button>
             {categories.map((cat) => (
               <button
@@ -73,36 +72,35 @@ export function PortfolioSection() {
                 type="button"
                 onClick={() => setSelectedCategory(cat.id)}
                 className={cn(
-                  "font-sans text-xs md:text-sm font-semibold px-5 py-2.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-secondary",
+                  "font-sans text-xs md:text-sm font-medium px-5 py-2.5 rounded-full transition-all duration-300 focus:outline-none",
                   selectedCategory === cat.id
-                    ? "bg-primary text-soft-white shadow-sm scale-105"
-                    : "bg-soft-white text-warm-gray border border-light-taupe/50 hover:bg-surface-container hover:text-primary"
+                    ? "bg-primary text-white shadow-sm scale-105"
+                    : "bg-background text-warm-gray border border-foreground/10 hover:bg-black/5 hover:text-primary"
                 )}
               >
-                {cat.label}
+                {cat.label} ({cat.count})
               </button>
             ))}
           </div>
         </Reveal>
 
-        {/* Portfolio Editorial Grid */}
+        {/* Asymmetrical Bento Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
-                className="aspect-[4/3] rounded-2xl bg-light-taupe/10 animate-pulse border border-light-taupe/20"
+                className="aspect-[4/3] rounded-3xl bg-black/5 animate-pulse border border-foreground/10"
               />
             ))}
           </div>
         ) : projects.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="text-center py-16">
             <p className="font-sans text-warm-gray text-sm">Tidak ada proyek dalam kategori ini.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
             {projects.map((project, idx) => {
-              // Asymmetrical grid column calculation for editorial feel
               const colSpanClass =
                 idx % 3 === 0
                   ? "lg:col-span-7"
@@ -118,45 +116,55 @@ export function PortfolioSection() {
 
               return (
                 <Reveal key={project.id} delay={0.1 * (idx % 4)} className={colSpanClass}>
+                  {/* Double-Bezel Card Outer Shell */}
                   <div
                     onClick={() => setSelectedProject(project)}
-                    className="group cursor-pointer bg-soft-white rounded-2xl overflow-hidden border border-light-taupe/30 shadow-sm hover:shadow-md hover:border-secondary/40 transition-all duration-500 flex flex-col h-full"
+                    className="p-2.5 rounded-3xl bg-black/5 dark:bg-white/5 border border-foreground/10 cursor-pointer group hover:border-foreground/25 transition-all duration-500 flex flex-col h-full"
                   >
-                    <div className={cn("relative w-full overflow-hidden bg-surface-container", aspectClass)}>
-                      <img
-                        src={project.coverSrc}
-                        alt={project.name}
-                        loading="lazy"
-                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      />
-                      <div className="absolute top-4 left-4 z-10">
-                        <span className="font-sans text-[11px] font-semibold text-primary uppercase tracking-wider bg-soft-white/90 backdrop-blur-md px-3 py-1 rounded-full border border-light-taupe/40 shadow-xs">
-                          {project.categoryLabel}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="p-6 md:p-8 flex flex-col justify-between flex-1 gap-4">
-                      <div>
-                        <div className="flex items-center justify-between gap-4 mb-2">
-                          <h3 className="font-serif text-xl md:text-2xl text-primary font-medium group-hover:text-secondary transition-colors line-clamp-1">
-                            {clientName}
-                          </h3>
-                          <div className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-warm-gray group-hover:bg-primary group-hover:text-soft-white transition-colors duration-300 shrink-0">
-                            <ArrowUpRight className="w-4 h-4" />
-                          </div>
+                    {/* Inner Core */}
+                    <div className="bg-background rounded-[calc(1.5rem-0.25rem)] overflow-hidden border border-foreground/5 shadow-xs flex flex-col h-full justify-between">
+                      <div className={cn("relative w-full overflow-hidden bg-muted", aspectClass)}>
+                        <img
+                          src={project.coverSrc}
+                          alt={project.name}
+                          loading="lazy"
+                          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                        />
+                        <div className="absolute top-4 left-4 z-10">
+                          <span className="text-[10px] font-mono tracking-widest uppercase text-primary bg-background/90 backdrop-blur-md px-3 py-1 rounded-full border border-foreground/10 shadow-xs">
+                            {project.categoryLabel}
+                          </span>
                         </div>
-                        <p className="font-sans text-xs md:text-sm text-warm-gray leading-relaxed">
-                          Dokumentasi hasil pengerjaan proyek kustom interior berkualitas tinggi untuk klien {clientName}.
-                        </p>
+                        <div className="absolute top-4 right-4 z-10">
+                          <span className="text-[10px] font-mono tracking-widest text-white bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                            <Images className="w-3 h-3" />
+                            {project.imageCount} Foto
+                          </span>
+                        </div>
                       </div>
 
-                      <div className="flex items-center justify-between pt-4 border-t border-light-taupe/20 text-xs font-sans text-warm-gray">
-                        <span className="flex items-center gap-1.5 font-medium text-primary">
-                          <MapPin className="w-3.5 h-3.5 text-secondary" />
-                          {location || "Indonesia"}
-                        </span>
-                        <span>{project.imageCount} Foto</span>
+                      <div className="p-6 md:p-7 flex flex-col justify-between flex-1 gap-4">
+                        <div>
+                          <div className="flex items-center justify-between gap-4 mb-2">
+                            <h3 className="font-serif text-xl md:text-2xl text-primary font-medium group-hover:text-secondary transition-colors line-clamp-1">
+                              {clientName}
+                            </h3>
+                            <div className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300 shrink-0">
+                              <ArrowUpRight className="w-4 h-4" />
+                            </div>
+                          </div>
+                          <p className="font-sans text-xs md:text-sm text-warm-gray leading-relaxed line-clamp-2">
+                            Dokumentasi hasil pengerjaan kustom interior dengan standar kualitas tinggi untuk {clientName}.
+                          </p>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-4 border-t border-foreground/10 text-xs font-sans text-warm-gray">
+                          <span className="flex items-center gap-1.5 font-medium text-primary">
+                            <MapPin className="w-3.5 h-3.5 text-secondary" />
+                            {location || "Jabodetabek / Jawa"}
+                          </span>
+                          <span className="font-mono text-[11px]">Buka Dokumentasi ↗</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -168,17 +176,19 @@ export function PortfolioSection() {
 
         {/* CTA to full portfolio page */}
         <Reveal delay={0.2}>
-          <div className="flex flex-col items-center gap-4 mt-14 text-center">
-            <p className="font-sans text-sm text-warm-gray">
-              Ini hanya sebagian kecil dari ribuan proyek yang telah kami kerjakan.
+          <div className="flex flex-col items-center gap-4 mt-16 text-center">
+            <p className="font-sans text-xs md:text-sm text-warm-gray">
+              Lihat seluruh koleksi dokumentasi foto proyek interior lengkap kami.
             </p>
-            <a
+            <Link
               href="/portofolio"
-              className="inline-flex items-center gap-2.5 bg-primary text-soft-white font-sans font-semibold text-sm px-8 py-3.5 rounded-full hover:bg-secondary transition-all duration-300 group shadow-sm"
+              className="group inline-flex items-center gap-2.5 bg-primary text-white font-sans text-xs uppercase tracking-wider pl-6 pr-3 py-3.5 rounded-full hover:bg-secondary transition-all shadow-md"
             >
-              <span>Lihat Semua Foto (9.800+ Dokumentasi)</span>
-              <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </a>
+              <span className="font-medium">Lihat Semua Proyek Portofolio</span>
+              <span className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">
+                <ArrowUpRight className="w-3.5 h-3.5 text-white" />
+              </span>
+            </Link>
           </div>
         </Reveal>
       </div>

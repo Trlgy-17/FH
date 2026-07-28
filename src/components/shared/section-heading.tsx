@@ -24,22 +24,23 @@ export function SectionHeading({
   };
 
   return (
-    <div className={cn("flex flex-col gap-3 max-w-2xl", alignmentClasses[align], className)}>
+    <div className={cn("flex flex-col gap-3.5 max-w-3xl", alignmentClasses[align], className)}>
       {eyebrow && (
-        <span className="font-label-sm text-xs md:text-sm text-warm-gray tracking-widest uppercase bg-surface-container-low px-3.5 py-1 rounded-full border border-light-taupe/40 w-fit">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[10px] md:text-[11px] uppercase tracking-[0.2em] font-medium text-warm-gray bg-black/5 dark:bg-white/5 border border-foreground/10 w-fit backdrop-blur-md">
+          <span className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
           {eyebrow}
-        </span>
+        </div>
       )}
       <h2
         className={cn(
-          "font-serif text-3xl md:text-4xl lg:text-5xl text-primary leading-tight font-medium tracking-tight",
+          "font-serif text-3xl md:text-5xl lg:text-6xl text-primary leading-[1.1] font-medium tracking-tight",
           titleClassName
         )}
       >
         {title}
       </h2>
       {subtitle && (
-        <p className="font-sans text-body-md text-warm-gray text-base md:text-lg leading-relaxed">
+        <p className="font-sans text-base md:text-lg text-warm-gray leading-relaxed max-w-[65ch]">
           {subtitle}
         </p>
       )}

@@ -5,20 +5,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import {
   X,
-  ChevronLeft,
-  ChevronRight,
   Search,
   ArrowLeft,
-  ZoomIn,
   MessageCircle,
   Images,
   Loader2,
   MapPin,
+  ArrowUpRight,
 } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { ProjectModal, type Project } from "@/components/shared/project-modal";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Category {
   id: string;
@@ -26,8 +22,7 @@ interface Category {
   count: number;
 }
 
-
-// ─── Project Card ─────────────────────────────────────────────────────────────
+// ─── Double-Bezel Project Card ───────────────────────────────────────────────
 
 function ProjectCard({
   project,
@@ -47,61 +42,59 @@ function ProjectCard({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: Math.min(index * 0.04, 0.5) }}
-      className="group cursor-pointer bg-soft-white rounded-2xl overflow-hidden border border-light-taupe/30 hover:border-secondary/40 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+      transition={{ duration: 0.35, delay: Math.min(index * 0.04, 0.4) }}
       onClick={onClick}
+      className="p-2 rounded-3xl bg-black/5 dark:bg-white/5 border border-foreground/10 cursor-pointer group hover:border-foreground/25 transition-all duration-500 flex flex-col h-full"
     >
-      {/* Cover image */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-light-taupe/10">
-        {!loaded && (
-          <div className="absolute inset-0 bg-gradient-to-br from-light-taupe/20 to-light-taupe/10 animate-pulse" />
-        )}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={project.coverSrc}
-          alt={`${project.categoryLabel} – ${project.name}`}
-          loading="lazy"
-          onLoad={() => setLoaded(true)}
-          className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${loaded ? "opacity-100" : "opacity-0"}`}
-        />
-        {/* Category badge */}
-        <div className="absolute top-3 left-3">
-          <span className="font-sans text-[10px] font-bold uppercase tracking-wider text-white bg-primary/80 backdrop-blur-sm px-2.5 py-1 rounded-full">
-            {project.categoryLabel}
-          </span>
-        </div>
-        {/* Photo count badge */}
-        <div className="absolute top-3 right-3">
-          <span className="flex items-center gap-1 font-sans text-[10px] font-semibold text-white bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-full">
-            <Images className="w-3 h-3" />
-            {project.imageCount}
-          </span>
-        </div>
-        {/* Hover overlay */}
-        <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition-all duration-300 flex items-center justify-center">
-          <div className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full font-sans text-xs font-semibold text-primary opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 shadow-md">
-            Lihat {project.imageCount} Foto
+      {/* Inner Core */}
+      <div className="bg-background rounded-[calc(1.5rem-0.25rem)] overflow-hidden border border-foreground/5 shadow-xs flex flex-col h-full justify-between">
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+          {!loaded && (
+            <div className="absolute inset-0 bg-gradient-to-br from-black/5 to-black/10 animate-pulse" />
+          )}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={project.coverSrc}
+            alt={`${project.categoryLabel} – ${project.name}`}
+            loading="lazy"
+            onLoad={() => setLoaded(true)}
+            className={`w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105 ${loaded ? "opacity-100" : "opacity-0"}`}
+          />
+          <div className="absolute top-3 left-3 z-10">
+            <span className="text-[10px] font-mono tracking-widest uppercase text-primary bg-background/90 backdrop-blur-md px-2.5 py-1 rounded-full border border-foreground/10 shadow-xs">
+              {project.categoryLabel}
+            </span>
+          </div>
+          <div className="absolute top-3 right-3 z-10">
+            <span className="text-[10px] font-mono tracking-widest text-white bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5">
+              <Images className="w-3 h-3" />
+              {project.imageCount} Foto
+            </span>
           </div>
         </div>
-      </div>
 
-      {/* Info */}
-      <div className="p-4">
-        <h3 className="font-sans text-sm font-semibold text-primary truncate leading-snug">
-          {clientName}
-        </h3>
-        {location && (
-          <p className="flex items-center gap-1 font-sans text-xs text-warm-gray mt-1 truncate">
-            <MapPin className="w-3 h-3 text-secondary shrink-0" />
-            {location}
-          </p>
-        )}
+        <div className="p-4 sm:p-5 flex flex-col justify-between flex-1 gap-3">
+          <div>
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="font-serif text-base font-medium text-primary truncate leading-snug group-hover:text-secondary transition-colors">
+                {clientName}
+              </h3>
+              <ArrowUpRight className="w-4 h-4 text-warm-gray group-hover:text-primary transition-colors shrink-0" />
+            </div>
+            {location && (
+              <p className="flex items-center gap-1 font-sans text-xs text-warm-gray mt-1 truncate">
+                <MapPin className="w-3 h-3 text-secondary shrink-0" />
+                {location}
+              </p>
+            )}
+          </div>
+        </div>
       </div>
     </motion.div>
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// ─── Main Portfolio Page ──────────────────────────────────────────────────────
 
 export default function PortfolioPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -110,15 +103,14 @@ export default function PortfolioPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
-  const [totalImages, setTotalImages] = useState(0); // sum of all images across all categories
-  const [totalProjects, setTotalProjects] = useState(0); // all projects regardless of filter
+  const [totalImages, setTotalImages] = useState(0);
+  const [totalProjects, setTotalProjects] = useState(0);
   const [loading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const search = useDebounce(searchInput, 400);
 
-  // Fetch categories + compute total image count
   useEffect(() => {
     fetch("/api/portfolio/categories")
       .then((r) => r.json())
@@ -127,7 +119,6 @@ export default function PortfolioPage() {
         setCategories(cats);
         setTotalImages(cats.reduce((sum: number, c: Category) => sum + c.count, 0));
       });
-    // Also fetch total project count (no filter)
     fetch("/api/portfolio/projects?category=all&page=1")
       .then((r) => r.json())
       .then((d) => setTotalProjects(d.total ?? 0));
@@ -173,66 +164,66 @@ export default function PortfolioPage() {
 
   return (
     <div className="min-h-screen bg-background font-sans">
-
-      {/* ── Header ── */}
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-light-taupe/30 h-14">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-8 h-full flex items-center justify-between gap-4">
+      {/* Floating Header Bar */}
+      <header className="sticky top-0 z-50 bg-background/85 backdrop-blur-xl border-b border-foreground/10 h-14">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 h-full flex items-center justify-between gap-4">
           <Link
             href="/"
-            className="flex items-center gap-2 text-warm-gray hover:text-primary transition-colors text-sm font-medium shrink-0"
+            className="flex items-center gap-2 text-warm-gray hover:text-primary transition-colors text-xs font-mono uppercase tracking-wider shrink-0"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Kembali ke Beranda</span>
+            <span className="hidden sm:inline">Kembali Ke Beranda</span>
             <span className="sm:hidden">Kembali</span>
           </Link>
 
           <div className="flex items-center gap-2">
-            <span className="font-serif text-base text-primary">FULLHOME ID</span>
-            <span className="text-light-taupe/60 text-sm">·</span>
-            <span className="font-sans text-sm text-warm-gray">Portofolio</span>
+            <span className="font-serif text-base text-primary font-medium">FULLHOME ID</span>
+            <span className="text-foreground/30 text-sm">·</span>
+            <span className="font-sans text-xs text-warm-gray">Portofolio Projek</span>
           </div>
 
           <a
             href="https://wa.me/6281237533193?text=Halo%20FULLHOME%20ID%2C%20Saya%20tertarik%20dengan%20portofolio%20yang%20saya%20lihat.%20Boleh%20konsultasi%3F"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-secondary text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-secondary/80 transition-colors shrink-0"
+            className="flex items-center gap-2 bg-primary text-white px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-wider hover:bg-secondary transition-colors shrink-0 shadow-xs"
           >
-            <MessageCircle className="w-4 h-4" />
+            <MessageCircle className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Konsultasi Gratis</span>
           </a>
         </div>
       </header>
 
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-8">
-
-        {/* ── Hero ── */}
-        <div className="py-10 md:py-14 text-center">
-          <motion.p
+      <div className="max-w-6xl mx-auto px-4 sm:px-8">
+        {/* Page Hero */}
+        <div className="py-12 md:py-16 text-center">
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="font-sans text-xs font-semibold tracking-[0.2em] text-secondary uppercase mb-3"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-mono tracking-widest uppercase text-warm-gray bg-black/5 dark:bg-white/5 border border-foreground/10 mb-4"
           >
-            Dokumentasi Nyata · 100% Asli
-          </motion.p>
+            <span>DOKUMENTASI NYATA • 100% ASLI</span>
+          </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.08 }}
-            className="font-serif text-4xl md:text-5xl text-primary leading-tight mb-4"
+            className="font-serif text-4xl md:text-6xl text-primary font-medium leading-[1.1] mb-4 tracking-tight"
           >
-            Portofolio Proyek
+            Portofolio Proyek Studio
           </motion.h1>
+
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.14 }}
-            className="font-sans text-warm-gray max-w-md mx-auto text-sm md:text-base"
+            className="font-sans text-warm-gray max-w-lg mx-auto text-xs md:text-sm leading-relaxed"
           >
-            Ratusan proyek interior nyata dari klien FULLHOME ID — klik proyek untuk lihat semua foto dokumentasinya.
+            Ratusan hasil dokumentasi pengerjaan interior kustom asli dari klien FULLHOME ID di Jabodetabek, Jawa & Bali.
           </motion.p>
 
-          {/* Stats */}
+          {/* Stats Bar */}
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -241,21 +232,21 @@ export default function PortfolioPage() {
           >
             {[
               { value: totalProjects > 0 ? `${totalProjects}+` : "…", label: "Proyek" },
-              { value: totalImages > 0 ? `${totalImages.toLocaleString("id")}+` : "…", label: "Foto" },
+              { value: totalImages > 0 ? `${totalImages.toLocaleString("id")}+` : "…", label: "Foto Dokumentasi" },
               { value: categories.length > 0 ? String(categories.length) : "…", label: "Kategori" },
             ].map((s) => (
               <div key={s.label} className="text-center">
-                <div className="font-serif text-2xl md:text-3xl text-primary">{s.value}</div>
-                <div className="font-sans text-xs text-warm-gray mt-0.5 uppercase tracking-wider">{s.label}</div>
+                <div className="font-serif text-2xl md:text-3xl font-medium text-primary">{s.value}</div>
+                <div className="font-mono text-[10px] text-warm-gray mt-0.5 uppercase tracking-wider">{s.label}</div>
               </div>
             ))}
           </motion.div>
         </div>
 
-        {/* ── Search ── */}
-        <div className="mb-6 max-w-xl mx-auto">
+        {/* Search Bar */}
+        <div className="mb-8 max-w-xl mx-auto">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-gray/50 pointer-events-none" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-gray pointer-events-none" />
             {loading && searchInput && (
               <Loader2 className="absolute right-12 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary animate-spin" />
             )}
@@ -263,15 +254,15 @@ export default function PortfolioPage() {
               id="portfolio-search"
               type="search"
               autoComplete="off"
-              placeholder="Cari nama klien atau lokasi…"
+              placeholder="Cari nama klien atau lokasi..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="w-full pl-11 pr-10 py-3 bg-soft-white border border-light-taupe/50 rounded-full text-sm font-sans text-primary placeholder:text-warm-gray/40 focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary/60 transition-all shadow-sm"
+              className="w-full pl-11 pr-10 py-3.5 bg-background border border-foreground/15 rounded-full text-xs font-sans text-primary placeholder:text-warm-gray/60 focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all shadow-xs"
             />
             {searchInput && (
               <button
                 onClick={() => setSearchInput("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-warm-gray/50 hover:text-warm-gray transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-warm-gray hover:text-primary transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -284,25 +275,24 @@ export default function PortfolioPage() {
           )}
         </div>
 
-        <div className="flex gap-6 lg:gap-8 pb-20">
-
-          {/* ── Sidebar categories ── */}
-          <aside className="hidden sm:block w-48 lg:w-52 flex-shrink-0">
-            <div className="sticky top-20 space-y-0.5">
-              <p className="font-sans text-[11px] font-semibold uppercase tracking-widest text-warm-gray/50 px-3 pb-2 mb-1 border-b border-light-taupe/20">
-                Kategori
+        <div className="flex gap-8 pb-24">
+          {/* Sidebar categories */}
+          <aside className="hidden sm:block w-52 flex-shrink-0">
+            <div className="sticky top-20 space-y-1 p-2 rounded-2xl bg-black/5 dark:bg-white/5 border border-foreground/10">
+              <p className="font-mono text-[10px] font-semibold uppercase tracking-widest text-warm-gray px-3 py-2 border-b border-foreground/10 mb-1">
+                KATEGORI PROYEK
               </p>
               <button
                 onClick={() => handleCategoryChange("all")}
-                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all flex items-center justify-between gap-2 ${
+                className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all flex items-center justify-between gap-2 ${
                   activeCategory === "all"
-                    ? "bg-primary text-white font-semibold"
-                    : "text-warm-gray hover:bg-light-taupe/20 hover:text-primary"
+                    ? "bg-primary text-white font-semibold shadow-xs"
+                    : "text-warm-gray hover:bg-black/5 hover:text-primary"
                 }`}
               >
                 <span>Semua</span>
-                <span className={`text-xs px-1.5 py-0.5 rounded-md tabular-nums flex-shrink-0 ${
-                  activeCategory === "all" ? "bg-white/20 text-white" : "bg-light-taupe/30 text-warm-gray"
+                <span className={`text-[10px] font-mono px-2 py-0.5 rounded-md tabular-nums ${
+                  activeCategory === "all" ? "bg-white/20 text-white" : "bg-black/5 text-warm-gray"
                 }`}>
                   {activeCategory === "all" && total > 0 ? total : "—"}
                 </span>
@@ -312,15 +302,15 @@ export default function PortfolioPage() {
                 <button
                   key={cat.id}
                   onClick={() => handleCategoryChange(cat.id)}
-                  className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all flex items-center justify-between gap-2 ${
+                  className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all flex items-center justify-between gap-2 ${
                     activeCategory === cat.id
-                      ? "bg-primary text-white font-semibold"
-                      : "text-warm-gray hover:bg-light-taupe/20 hover:text-primary"
+                      ? "bg-primary text-white font-semibold shadow-xs"
+                      : "text-warm-gray hover:bg-black/5 hover:text-primary"
                   }`}
                 >
                   <span className="truncate">{cat.label}</span>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-md tabular-nums flex-shrink-0 ${
-                    activeCategory === cat.id ? "bg-white/20 text-white" : "bg-light-taupe/30 text-warm-gray"
+                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded-md tabular-nums ${
+                    activeCategory === cat.id ? "bg-white/20 text-white" : "bg-black/5 text-warm-gray"
                   }`}>
                     {cat.count.toLocaleString("id")}
                   </span>
@@ -329,15 +319,14 @@ export default function PortfolioPage() {
             </div>
           </aside>
 
-          {/* ── Main Grid ── */}
+          {/* Main Grid */}
           <main className="flex-1 min-w-0">
-
             {/* Mobile category pills */}
             <div className="flex sm:hidden gap-2 overflow-x-auto pb-3 mb-4 -mx-4 px-4">
               <button
                 onClick={() => handleCategoryChange("all")}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 transition-all ${
-                  activeCategory === "all" ? "bg-primary text-white" : "bg-soft-white border border-light-taupe/40 text-warm-gray"
+                className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all ${
+                  activeCategory === "all" ? "bg-primary text-white" : "bg-background border border-foreground/15 text-warm-gray"
                 }`}
               >
                 Semua
@@ -346,8 +335,8 @@ export default function PortfolioPage() {
                 <button
                   key={cat.id}
                   onClick={() => handleCategoryChange(cat.id)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 transition-all ${
-                    activeCategory === cat.id ? "bg-primary text-white" : "bg-soft-white border border-light-taupe/40 text-warm-gray"
+                  className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all ${
+                    activeCategory === cat.id ? "bg-primary text-white" : "bg-background border border-foreground/15 text-warm-gray"
                   }`}
                 >
                   {cat.label}
@@ -357,9 +346,9 @@ export default function PortfolioPage() {
 
             {/* Result count */}
             {!loading && total > 0 && (
-              <p className="font-sans text-xs text-warm-gray mb-4">
+              <p className="font-sans text-xs text-warm-gray mb-5">
                 Menampilkan {projects.length} dari {total} proyek
-                {activeCategory !== "all" && ` · ${categories.find(c => c.id === activeCategory)?.label}`}
+                {activeCategory !== "all" && ` · ${categories.find((c) => c.id === activeCategory)?.label}`}
               </p>
             )}
 
@@ -388,11 +377,11 @@ export default function PortfolioPage() {
             {loading && projects.length === 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                 {Array.from({ length: 12 }).map((_, i) => (
-                  <div key={i} className="rounded-2xl overflow-hidden animate-pulse bg-soft-white border border-light-taupe/20">
-                    <div className="aspect-[4/3] bg-light-taupe/20" />
+                  <div key={i} className="p-2 rounded-3xl bg-black/5 animate-pulse border border-foreground/10">
+                    <div className="aspect-[4/3] bg-muted rounded-2xl" />
                     <div className="p-4 space-y-2">
-                      <div className="h-4 bg-light-taupe/20 rounded w-3/4" />
-                      <div className="h-3 bg-light-taupe/15 rounded w-1/2" />
+                      <div className="h-4 bg-foreground/10 rounded w-3/4" />
+                      <div className="h-3 bg-foreground/5 rounded w-1/2" />
                     </div>
                   </div>
                 ))}
@@ -406,34 +395,37 @@ export default function PortfolioPage() {
               </div>
             )}
 
-            {/* Empty */}
+            {/* Empty state */}
             {!loading && projects.length === 0 && (
               <div className="flex flex-col items-center justify-center py-24">
-                <div className="w-14 h-14 rounded-full bg-light-taupe/20 flex items-center justify-center mb-4">
-                  <Search className="w-6 h-6 text-warm-gray/30" />
+                <div className="w-14 h-14 rounded-full bg-black/5 flex items-center justify-center mb-4">
+                  <Search className="w-6 h-6 text-warm-gray" />
                 </div>
                 <p className="font-sans text-warm-gray text-sm">Tidak ada proyek ditemukan</p>
                 {(searchInput || activeCategory !== "all") && (
                   <button
-                    onClick={() => { setSearchInput(""); setActiveCategory("all"); }}
-                    className="mt-3 font-sans text-sm text-secondary hover:underline"
+                    onClick={() => {
+                      setSearchInput("");
+                      setActiveCategory("all");
+                    }}
+                    className="mt-3 font-sans text-xs text-secondary hover:underline"
                   >
-                    Reset filter
+                    Reset filter pencarian
                   </button>
                 )}
               </div>
             )}
 
-            {/* Load more */}
+            {/* Load more button */}
             {!loading && page < totalPages && (
-              <div className="flex justify-center mt-10">
+              <div className="flex justify-center mt-12">
                 <button
                   onClick={loadMore}
-                  className="px-8 py-3 bg-primary text-soft-white rounded-full font-sans text-sm font-semibold hover:bg-secondary transition-all duration-300 shadow-sm"
+                  className="group inline-flex items-center gap-2 bg-primary text-white rounded-full px-8 py-3.5 font-sans text-xs font-mono uppercase tracking-wider hover:bg-secondary transition-all shadow-md"
                 >
-                  Muat Lebih Banyak
-                  <span className="ml-2 opacity-60 text-xs">
-                    ({Math.min((totalPages - page) * 20, total - projects.length)} proyek lagi)
+                  <span>Muat Lebih Banyak Proyek</span>
+                  <span className="opacity-60 text-[11px]">
+                    ({Math.min((totalPages - page) * 20, total - projects.length)} lagi)
                   </span>
                 </button>
               </div>
@@ -442,7 +434,7 @@ export default function PortfolioPage() {
         </div>
       </div>
 
-      {/* ── Project Modal ── */}
+      {/* Project Lightbox Modal */}
       <AnimatePresence>
         {selectedProject && (
           <ProjectModal

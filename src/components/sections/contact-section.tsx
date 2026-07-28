@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, MessageCircle, Send, Loader2 } from "lucide-react";
+import { CheckCircle2, MessageCircle, Send, Loader2, ArrowUpRight } from "lucide-react";
 
 export function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,7 +41,6 @@ export function ContactSection() {
     setServerError(null);
 
     try {
-      // 1. Post to local API route handler for validation/logging
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -53,12 +52,10 @@ export function ContactSection() {
         throw new Error(errorData.message || "Gagal memproses formulir");
       }
 
-      // 2. Build pre-filled structured WhatsApp link & open window
       const waUrl = buildWhatsAppLink(data);
       setIsSuccess(true);
       reset();
 
-      // Redirect user to WhatsApp with filled message
       setTimeout(() => {
         window.open(waUrl, "_blank");
       }, 600);
@@ -70,171 +67,180 @@ export function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-16 md:py-24 max-w-container-max mx-auto px-6 md:px-8">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        {/* Contact Left Column Info */}
+    <section id="contact" className="py-20 md:py-32 max-w-6xl mx-auto px-4 sm:px-6 md:px-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
+        {/* Contact Left Info */}
         <div className="lg:col-span-5 flex flex-col gap-6">
           <Reveal>
             <SectionHeading
-              eyebrow="Formulir Konsultasi"
+              eyebrow="FORMULIR KONSULTASI"
               title="Diskusikan Proyek Interior Anda"
-              subtitle="Isi rincian singkat di bawah ini. Tim kami akan menyiapkan estimasi awal dan menghubungi Anda kembali."
+              subtitle="Isi rincian kebutuhan Anda. Tim desainer kami akan menyiapkan analisis tata ruang dan estimasi RAB awal."
               align="left"
             />
           </Reveal>
 
           <Reveal delay={0.2}>
             <div className="space-y-4 pt-2">
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-surface-container-low border border-light-taupe/40">
-                <div className="w-8 h-8 rounded-full bg-secondary/15 flex items-center justify-center shrink-0 mt-0.5 text-secondary">
-                  <CheckCircle2 className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="font-serif text-base font-medium text-primary">
-                    Diskusi Konsep Gratis
-                  </h4>
-                  <p className="font-sans text-xs text-warm-gray">
-                    Sesi konsultasi pertama tidak dipungut biaya dan tanpa komitmen.
-                  </p>
+              <div className="p-2 rounded-2xl bg-black/5 dark:bg-white/5 border border-foreground/10">
+                <div className="bg-background rounded-xl p-4 flex items-start gap-3.5 border border-foreground/5 shadow-xs">
+                  <div className="w-9 h-9 rounded-full bg-secondary/15 flex items-center justify-center shrink-0 text-secondary">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-serif text-base font-medium text-primary">
+                      Diskusi & Estimasi Awal Gratis
+                    </h4>
+                    <p className="font-sans text-xs text-warm-gray mt-0.5 leading-relaxed">
+                      Sesi konsultasi pertama tidak dipungut biaya dan tanpa komitmen terikat.
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-surface-container-low border border-light-taupe/40">
-                <div className="w-8 h-8 rounded-full bg-secondary/15 flex items-center justify-center shrink-0 mt-0.5 text-secondary">
-                  <MessageCircle className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="font-serif text-base font-medium text-primary">
-                    Pesan WhatsApp Otomatis
-                  </h4>
-                  <p className="font-sans text-xs text-warm-gray">
-                    Formulir akan secara otomatis memformat pesan rapi ke nomor WhatsApp resmi kami.
-                  </p>
+              <div className="p-2 rounded-2xl bg-black/5 dark:bg-white/5 border border-foreground/10">
+                <div className="bg-background rounded-xl p-4 flex items-start gap-3.5 border border-foreground/5 shadow-xs">
+                  <div className="w-9 h-9 rounded-full bg-secondary/15 flex items-center justify-center shrink-0 text-secondary">
+                    <MessageCircle className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-serif text-base font-medium text-primary">
+                      Format Pesan WhatsApp Rapi
+                    </h4>
+                    <p className="font-sans text-xs text-warm-gray mt-0.5 leading-relaxed">
+                      Sistem akan secara otomatis merangkum data Anda ke nomor WhatsApp studio kami.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </Reveal>
         </div>
 
-        {/* Contact Right Column Form */}
-        <div className="lg:col-span-7 bg-soft-white p-6 sm:p-8 md:p-10 rounded-2xl border border-light-taupe/40 shadow-sm relative">
+        {/* Contact Right Form - Double Bezel Architecture */}
+        <div className="lg:col-span-7">
           <Reveal delay={0.1}>
-            {isSuccess ? (
-              <div className="py-12 flex flex-col items-center justify-center text-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-secondary/20 flex items-center justify-center text-secondary">
-                  <CheckCircle2 className="w-8 h-8" />
-                </div>
-                <h3 className="font-serif text-2xl md:text-3xl font-medium text-primary">
-                  Terima Kasih!
-                </h3>
-                <p className="font-sans text-sm text-warm-gray max-w-md">
-                  Data Anda berhasil diproses. Aplikasi WhatsApp sedang dibuka untuk mengirimkan pesan konsultasi Anda.
-                </p>
-                <Button
-                  onClick={() => setIsSuccess(false)}
-                  variant="outline"
-                  className="mt-4"
-                >
-                  Kirim Formulir Lain
-                </Button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
-                {serverError && (
-                  <div className="p-4 rounded-lg bg-destructive/10 text-destructive font-sans text-xs">
-                    {serverError}
+            <div className="p-2.5 sm:p-3.5 rounded-3xl bg-black/5 dark:bg-white/5 border border-foreground/10 shadow-xl">
+              <div className="bg-background rounded-[calc(1.5rem-0.25rem)] p-6 sm:p-8 md:p-10 border border-foreground/5 shadow-xs">
+                {isSuccess ? (
+                  <div className="py-12 flex flex-col items-center justify-center text-center gap-4">
+                    <div className="w-16 h-16 rounded-full bg-secondary/20 flex items-center justify-center text-secondary">
+                      <CheckCircle2 className="w-8 h-8" />
+                    </div>
+                    <h3 className="font-serif text-2xl md:text-3xl font-medium text-primary">
+                      Formulir Berhasil Diterima!
+                    </h3>
+                    <p className="font-sans text-sm text-warm-gray max-w-md leading-relaxed">
+                      Aplikasi WhatsApp sedang dibuka untuk mengirimkan rangkuman pesan konsultasi Anda langsung ke tim kami.
+                    </p>
+                    <Button
+                      onClick={() => setIsSuccess(false)}
+                      variant="outline"
+                      className="mt-4 rounded-full"
+                    >
+                      Kirim Formulir Lain
+                    </Button>
                   </div>
+                ) : (
+                  <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+                    {serverError && (
+                      <div className="p-4 rounded-xl bg-destructive/10 text-destructive font-sans text-xs">
+                        {serverError}
+                      </div>
+                    )}
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <Input
+                        label="Nama Lengkap *"
+                        placeholder="Contoh: Budi Santoso"
+                        error={errors.name?.message}
+                        {...register("name")}
+                      />
+                      <Input
+                        label="Nomor WhatsApp *"
+                        placeholder="Contoh: 081234567890"
+                        error={errors.whatsapp?.message}
+                        {...register("whatsapp")}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <Input
+                        label="Lokasi Proyek *"
+                        placeholder="Contoh: BSD City, Tangerang"
+                        error={errors.projectLocation?.message}
+                        {...register("projectLocation")}
+                      />
+                      <Select
+                        label="Jenis Ruangan *"
+                        options={[
+                          { label: "Rumah Tinggal", value: "Rumah Tinggal" },
+                          { label: "Apartemen", value: "Apartemen" },
+                          { label: "Kamar Tidur Utama", value: "Kamar Tidur Utama" },
+                          { label: "Dapur & Kitchen Set", value: "Dapur & Kitchen Set" },
+                          { label: "Ruang Komersial / Toko / Kafe", value: "Ruang Komersial" },
+                          { label: "Kantor / Work Space", value: "Kantor / Work Space" },
+                        ]}
+                        error={errors.spaceType?.message}
+                        {...register("spaceType")}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <Select
+                        label="Kebutuhan Layanan *"
+                        options={[
+                          { label: "Full Interior Design & Build", value: "Full Interior Design & Build" },
+                          { label: "Desain Interior 3D Saja", value: "Desain Interior 3D Saja" },
+                          { label: "Custom Furniture & Fit-out", value: "Custom Furniture & Fit-out" },
+                          { label: "Renovasi Ruang & Pengawasan", value: "Renovasi Ruang & Pengawasan" },
+                        ]}
+                        error={errors.serviceNeed?.message}
+                        {...register("serviceNeed")}
+                      />
+                      <Select
+                        label="Estimasi Rencana Anggaran"
+                        options={[
+                          { label: "Di bawah Rp 50 Juta", value: "< Rp 50 Juta" },
+                          { label: "Rp 50 Juta - Rp 150 Juta", value: "Rp 50jt - Rp 150jt" },
+                          { label: "Rp 150 Juta - Rp 300 Juta", value: "Rp 150jt - Rp 300jt" },
+                          { label: "Di atas Rp 300 Juta", value: "> Rp 300 Juta" },
+                        ]}
+                        error={errors.budgetRange?.message}
+                        {...register("budgetRange")}
+                      />
+                    </div>
+
+                    <Textarea
+                      label="Pesan atau Catatan Tambahan"
+                      placeholder="Ceritakan detail ruangan, gaya favorit, atau kebutuhan spesifik Anda..."
+                      error={errors.message?.message}
+                      {...register("message")}
+                    />
+
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="group inline-flex items-center justify-center gap-2.5 bg-primary text-soft-white font-sans text-xs uppercase tracking-wider pl-6 pr-3 py-4 rounded-full hover:bg-secondary transition-all active:scale-98 shadow-md mt-2 disabled:opacity-50"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Memproses Data...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-semibold">Kirim & Lanjutkan Ke WhatsApp</span>
+                          <span className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">
+                            <ArrowUpRight className="w-3.5 h-3.5 text-white" />
+                          </span>
+                        </>
+                      )}
+                    </button>
+                  </form>
                 )}
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <Input
-                    label="Nama Lengkap *"
-                    placeholder="Contoh: Budi Santoso"
-                    error={errors.name?.message}
-                    {...register("name")}
-                  />
-                  <Input
-                    label="Nomor WhatsApp *"
-                    placeholder="Contoh: 081234567890"
-                    error={errors.whatsapp?.message}
-                    {...register("whatsapp")}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <Input
-                    label="Lokasi Proyek *"
-                    placeholder="Contoh: BSD City, Tangerang"
-                    error={errors.projectLocation?.message}
-                    {...register("projectLocation")}
-                  />
-                  <Select
-                    label="Jenis Ruangan *"
-                    options={[
-                      { label: "Rumah Tinggal", value: "Rumah Tinggal" },
-                      { label: "Apartemen", value: "Apartemen" },
-                      { label: "Kamar Tidur Utama", value: "Kamar Tidur Utama" },
-                      { label: "Dapur & Kitchen Set", value: "Dapur & Kitchen Set" },
-                      { label: "Ruang Komersial / Toko / Kafe", value: "Ruang Komersial" },
-                      { label: "Kantor / Work Space", value: "Kantor / Work Space" },
-                    ]}
-                    error={errors.spaceType?.message}
-                    {...register("spaceType")}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <Select
-                    label="Kebutuhan Layanan *"
-                    options={[
-                      { label: "Full Interior Design & Build", value: "Full Interior Design & Build" },
-                      { label: "Desain Interior 3D Saja", value: "Desain Interior 3D Saja" },
-                      { label: "Custom Furniture & Fit-out", value: "Custom Furniture & Fit-out" },
-                      { label: "Renovasi Ruang & Pengawasan", value: "Renovasi Ruang & Pengawasan" },
-                    ]}
-                    error={errors.serviceNeed?.message}
-                    {...register("serviceNeed")}
-                  />
-                  <Select
-                    label="Estimasi Rencana Anggaran"
-                    options={[
-                      { label: "Di bawah Rp 50 Juta", value: "< Rp 50 Juta" },
-                      { label: "Rp 50 Juta - Rp 150 Juta", value: "Rp 50jt - Rp 150jt" },
-                      { label: "Rp 150 Juta - Rp 300 Juta", value: "Rp 150jt - Rp 300jt" },
-                      { label: "Di atas Rp 300 Juta", value: "> Rp 300 Juta" },
-                    ]}
-                    error={errors.budgetRange?.message}
-                    {...register("budgetRange")}
-                  />
-                </div>
-
-                <Textarea
-                  label="Pesan atau Catatan Tambahan"
-                  placeholder="Ceritakan detail ruangan, gaya favorit, atau kebutuhan spesifik Anda..."
-                  error={errors.message?.message}
-                  {...register("message")}
-                />
-
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  size="lg"
-                  className="w-full mt-2 font-sans font-semibold"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      <span>Memproses...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4 mr-2" />
-                      <span>Kirim & Lanjutkan ke WhatsApp</span>
-                    </>
-                  )}
-                </Button>
-              </form>
-            )}
+              </div>
+            </div>
           </Reveal>
         </div>
       </div>
