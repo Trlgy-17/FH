@@ -8,93 +8,16 @@ import {
   Search,
   ArrowLeft,
   MessageCircle,
-  Images,
   Loader2,
-  MapPin,
-  ArrowUpRight,
 } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
-import { ProjectModal, type Project } from "@/components/shared/project-modal";
+import { ProjectModal, ProjectCardWithSlider, type Project } from "@/components/shared/project-modal";
 
 interface Category {
   id: string;
   label: string;
   count: number;
 }
-
-// ─── Double-Bezel Project Card ───────────────────────────────────────────────
-
-function ProjectCard({
-  project,
-  index,
-  onClick,
-}: {
-  project: Project;
-  index: number;
-  onClick: () => void;
-}) {
-  const [loaded, setLoaded] = useState(false);
-  const parts = project.name.split(" - ");
-  const clientName = parts[0];
-  const location = parts.slice(1).join(" - ");
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: Math.min(index * 0.04, 0.4) }}
-      onClick={onClick}
-      className="p-2 rounded-3xl bg-black/5 dark:bg-white/5 border border-foreground/10 cursor-pointer group hover:border-foreground/25 transition-all duration-500 flex flex-col h-full"
-    >
-      {/* Inner Core */}
-      <div className="bg-background rounded-[calc(1.5rem-0.25rem)] overflow-hidden border border-foreground/5 shadow-xs flex flex-col h-full justify-between">
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
-          {!loaded && (
-            <div className="absolute inset-0 bg-gradient-to-br from-black/5 to-black/10 animate-pulse" />
-          )}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={project.coverSrc}
-            alt={`${project.categoryLabel} – ${project.name}`}
-            loading="lazy"
-            onLoad={() => setLoaded(true)}
-            className={`w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105 ${loaded ? "opacity-100" : "opacity-0"}`}
-          />
-          <div className="absolute top-3 left-3 z-10">
-            <span className="text-[10px] font-mono tracking-widest uppercase text-primary bg-background/90 backdrop-blur-md px-2.5 py-1 rounded-full border border-foreground/10 shadow-xs">
-              {project.categoryLabel}
-            </span>
-          </div>
-          <div className="absolute top-3 right-3 z-10">
-            <span className="text-[10px] font-mono tracking-widest text-white bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5">
-              <Images className="w-3 h-3" />
-              {project.imageCount} Foto
-            </span>
-          </div>
-        </div>
-
-        <div className="p-4 sm:p-5 flex flex-col justify-between flex-1 gap-3">
-          <div>
-            <div className="flex items-center justify-between gap-2">
-              <h3 className="font-serif text-base font-medium text-primary truncate leading-snug group-hover:text-secondary transition-colors">
-                {clientName}
-              </h3>
-              <ArrowUpRight className="w-4 h-4 text-warm-gray group-hover:text-primary transition-colors shrink-0" />
-            </div>
-            {location && (
-              <p className="flex items-center gap-1 font-sans text-xs text-warm-gray mt-1 truncate">
-                <MapPin className="w-3 h-3 text-secondary shrink-0" />
-                {location}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-// ─── Main Portfolio Page ──────────────────────────────────────────────────────
 
 export default function PortfolioPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -352,7 +275,7 @@ export default function PortfolioPage() {
               </p>
             )}
 
-            {/* Project Cards Grid */}
+            {/* Project Cards Grid With Image Slider */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${activeCategory}-${search}`}
@@ -363,7 +286,7 @@ export default function PortfolioPage() {
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
               >
                 {projects.map((proj, i) => (
-                  <ProjectCard
+                  <ProjectCardWithSlider
                     key={proj.id}
                     project={proj}
                     index={i}

@@ -2,24 +2,27 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
-const KONTEN_ROOT = "F:\\KONTEN";
+const LOCAL_KONTEN = path.join(process.cwd(), "Portofolio", "FULLHOME");
+const EXTERNAL_KONTEN = "F:\\KONTEN";
 
-// WHITELIST: only these exact folder names are valid category folders.
+// WHITELIST: maps raw folder names to clean display labels
 export const CATEGORY_MAP: Record<string, string> = {
+  "APARTEMEN": "Apartemen",
+  "BACDROP TV": "Backdrop TV",
   "BEDROOM": "Bedroom",
+  "BEFORE-AFTER": "Before & After",
+  "Before after": "Before & After",
+  "INTERIOR TOKO": "Interior Toko",
   "KITCHENSET": "Kitchen Set",
-  "LIVINGROOM": "Living Room",
+  "LEMARI BAWAH TANGGA": "Lemari Bawah Tangga",
   "WARDROBE": "Wardrobe",
+  "LIVINGROOM": "Living Room",
   "SEMI & FULLHOME": "Semi & Full Home",
   "SEMI - FULLHOME": "Semi & Full Home",
   "WORKING SPACE  INTERIOR KANTOR": "Interior Kantor",
   "INTERIOR KANTOR": "Interior Kantor",
-  "INTERIOR TOKO": "Interior Toko",
   "INTERIOR SALON": "Interior Salon",
-  "LEMARI BAWAH TANGGA": "Lemari Bawah Tangga",
   "LOUNDRY ROOM": "Laundry Room",
-  "APARTEMEN": "Apartemen",
-  "Before after": "Before & After",
   "DAILY": "Daily",
   "LIVE STREAMING ROOM": "Live Streaming Room",
 };
@@ -29,17 +32,18 @@ export const VALID_CAT_NAMES = new Set(Object.keys(CATEGORY_MAP));
 export interface PortfolioCategory {
   id: string;
   label: string;
-  count: number; // image count
+  count: number;
 }
 
 const FALLBACK_CATEGORIES: PortfolioCategory[] = [
   { id: "kitchen-set", label: "Kitchen Set", count: 48 },
   { id: "wardrobe", label: "Wardrobe", count: 38 },
   { id: "bedroom", label: "Bedroom", count: 26 },
-  { id: "living-room", label: "Living Room", count: 35 },
-  { id: "semi-full-home", label: "Semi & Full Home", count: 52 },
+  { id: "backdrop-tv", label: "Backdrop TV", count: 18 },
   { id: "apartemen", label: "Apartemen", count: 19 },
-  { id: "interior-kantor", label: "Interior Kantor", count: 14 },
+  { id: "lemari-bawah-tangga", label: "Lemari Bawah Tangga", count: 22 },
+  { id: "interior-toko", label: "Interior Toko", count: 14 },
+  { id: "before-after", label: "Before & After", count: 10 },
 ];
 
 export function normalizeCat(raw: string): string {
@@ -50,7 +54,7 @@ export function slugify(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
-/** Formats folder names cleanly */
+/** Clean project folder names into display names */
 export function cleanProjectName(raw: string): string {
   const cleaned = raw.replace(/^\d+[\.\s]+/, "").trim();
   return cleaned
@@ -68,9 +72,6 @@ export function cleanProjectName(raw: string): string {
     .replace(/-/g, "–");
 }
 
-/**
- * Data Validation Skill: Validates category and project naming based on actual content
- */
 export function getValidatedProjectInfo(
   parentCat: string,
   subfolderName: string,
@@ -79,7 +80,6 @@ export function getValidatedProjectInfo(
   const normPath = relativePath.replace(/\\/g, '/').toLowerCase();
   const cleanedName = cleanProjectName(subfolderName);
 
-  // 1. Check for Wardrobe keywords
   if (
     normPath.includes('wardrobe') ||
     normPath.includes('wardrop') ||
@@ -93,7 +93,6 @@ export function getValidatedProjectInfo(
     };
   }
 
-  // 2. Check for Kitchen Set keywords
   if (
     normPath.includes('kitchen') ||
     normPath.includes('dapur')
@@ -105,7 +104,6 @@ export function getValidatedProjectInfo(
     };
   }
 
-  // 3. Fallback to parent category
   const label = normalizeCat(parentCat);
   const slug = slugify(label);
   return {
@@ -122,27 +120,28 @@ function countImages(dir: string): number {
       const full = path.join(dir, item);
       try {
         if (fs.statSync(full).isDirectory()) n += countImages(full);
-        else if (/\.(jpg|jpeg|png|webp)$/i.test(item)) n++;
+        else if (/\.(jpg|jpeg|png|webp|heic)$/i.test(item)) n++;
       } catch {}
     }
   } catch {}
   return n;
 }
 
-export async function GET() {
+function scanCategoryRoot(rootDir: string, catMap: Map<string, { label: string; count: number }>) {
   try {
-    if (!fs.existsSync(KONTEN_ROOT)) {
-      return NextResponse.json({ categories: FALLBACK_CATEGORIES });
-    }
+    if (!fs.existsSync(rootDir)) return;
 
-    const yearFolders = fs.readdirSync(KONTEN_ROOT).filter((d) => {
-      try { return fs.statSync(path.join(KONTEN_ROOT, d)).isDirectory(); } catch { return false; }
+    // Check if rootDir contains category folders directly or year folders
+    const entries = fs.readdirSync(rootDir).filter((d) => {
+      try { return fs.statSync(path.join(rootDir, d)).isDirectory(); } catch { return false; }
     });
 
-    const catMap = new Map<string, { label: string; count: number }>();
+    const isDirectCategoryRoot = entries.some((e) => VALID_CAT_NAMES.has(e));
+
+    const yearFolders = isDirectCategoryRoot ? ["."] : entries;
 
     for (const yr of yearFolders) {
-      const yearPath = path.join(KONTEN_ROOT, yr);
+      const yearPath = yr === "." ? rootDir : path.join(rootDir, yr);
       const catFolders = fs.readdirSync(yearPath).filter((d) => {
         try { return fs.statSync(path.join(yearPath, d)).isDirectory(); } catch { return false; }
       });
@@ -151,7 +150,6 @@ export async function GET() {
         if (!VALID_CAT_NAMES.has(cat)) continue;
 
         const catPath = path.join(yearPath, cat);
-
         const subDirs = fs.readdirSync(catPath).filter((d) => {
           try { return fs.statSync(path.join(catPath, d)).isDirectory(); } catch { return false; }
         });
@@ -162,11 +160,8 @@ export async function GET() {
           const slug  = slugify(label);
           
           const existing = catMap.get(slug);
-          if (existing) {
-            existing.count += imgCount;
-          } else {
-            catMap.set(slug, { label, count: imgCount });
-          }
+          if (existing) existing.count += imgCount;
+          else catMap.set(slug, { label, count: imgCount });
         } else if (cat === "KITCHENSET") {
           for (const style of subDirs) {
             const stylePath = path.join(catPath, style);
@@ -174,18 +169,23 @@ export async function GET() {
               try { return fs.statSync(path.join(stylePath, d)).isDirectory(); } catch { return false; }
             });
 
-            for (const client of clientDirs) {
-              const clientPath = path.join(stylePath, client);
-              const imgCount = countImages(clientPath);
-              const relPath = path.join(yr, cat, style, client);
-              
-              const validated = getValidatedProjectInfo(cat, client, relPath);
-              
+            if (clientDirs.length === 0) {
+              const imgCount = countImages(stylePath);
+              const relPath = path.join(yr, cat, style);
+              const validated = getValidatedProjectInfo(cat, style, relPath);
               const existing = catMap.get(validated.categorySlug);
-              if (existing) {
-                existing.count += imgCount;
-              } else {
-                catMap.set(validated.categorySlug, { label: validated.categoryLabel, count: imgCount });
+              if (existing) existing.count += imgCount;
+              else catMap.set(validated.categorySlug, { label: validated.categoryLabel, count: imgCount });
+            } else {
+              for (const client of clientDirs) {
+                const clientPath = path.join(stylePath, client);
+                const imgCount = countImages(clientPath);
+                const relPath = path.join(yr, cat, style, client);
+                
+                const validated = getValidatedProjectInfo(cat, client, relPath);
+                const existing = catMap.get(validated.categorySlug);
+                if (existing) existing.count += imgCount;
+                else catMap.set(validated.categorySlug, { label: validated.categoryLabel, count: imgCount });
               }
             }
           }
@@ -196,24 +196,36 @@ export async function GET() {
             const relPath = path.join(yr, cat, subDir);
             
             const validated = getValidatedProjectInfo(cat, subDir, relPath);
-            
             const existing = catMap.get(validated.categorySlug);
-            if (existing) {
-              existing.count += imgCount;
-            } else {
-              catMap.set(validated.categorySlug, { label: validated.categoryLabel, count: imgCount });
-            }
+            if (existing) existing.count += imgCount;
+            else catMap.set(validated.categorySlug, { label: validated.categoryLabel, count: imgCount });
           }
         }
       }
     }
+  } catch (err) {
+    console.error(`Error scanning ${rootDir}:`, err);
+  }
+}
+
+export async function GET() {
+  try {
+    const catMap = new Map<string, { label: string; count: number }>();
+
+    // Primary: Scan local Portofolio/FULLHOME workspace
+    scanCategoryRoot(LOCAL_KONTEN, catMap);
+
+    // Secondary: Scan external F:\KONTEN drive if present
+    scanCategoryRoot(EXTERNAL_KONTEN, catMap);
 
     const categories: PortfolioCategory[] = Array.from(catMap.entries())
       .map(([id, { label, count }]) => ({ id, label, count }))
       .filter((c) => c.count > 0)
       .sort((a, b) => b.count - a.count);
 
-    return NextResponse.json({ categories: categories.length > 0 ? categories : FALLBACK_CATEGORIES });
+    return NextResponse.json({
+      categories: categories.length > 0 ? categories : FALLBACK_CATEGORIES,
+    });
   } catch (err) {
     console.error("Portfolio categories error:", err);
     return NextResponse.json({ categories: FALLBACK_CATEGORIES });

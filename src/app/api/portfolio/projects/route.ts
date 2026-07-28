@@ -6,10 +6,18 @@ import {
   getValidatedProjectInfo,
   normalizeCat,
   slugify,
+  cleanProjectName,
 } from "../categories/route";
 
-const KONTEN_ROOT = "F:\\KONTEN";
+const LOCAL_KONTEN = path.join(process.cwd(), "Portofolio", "FULLHOME");
+const EXTERNAL_KONTEN = "F:\\KONTEN";
 const PAGE_SIZE = 20;
+
+export interface ProjectImageItem {
+  id: string;
+  src: string;
+  filename: string;
+}
 
 export interface Project {
   id: string;
@@ -17,6 +25,7 @@ export interface Project {
   category: string;
   categoryLabel: string;
   coverSrc: string;
+  images: ProjectImageItem[];
   imageCount: number;
 }
 
@@ -27,6 +36,11 @@ const FALLBACK_PROJECTS: Project[] = [
     category: "kitchen-set",
     categoryLabel: "Kitchen Set",
     coverSrc: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=1200&auto=format&fit=crop",
+    images: [
+      { id: "f-k-1", src: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=1200&auto=format&fit=crop", filename: "Kitchen 1" },
+      { id: "f-k-2", src: "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?q=80&w=1200&auto=format&fit=crop", filename: "Kitchen 2" },
+      { id: "f-k-3", src: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop", filename: "Kitchen 3" },
+    ],
     imageCount: 18,
   },
   {
@@ -35,6 +49,11 @@ const FALLBACK_PROJECTS: Project[] = [
     category: "wardrobe",
     categoryLabel: "Wardrobe",
     coverSrc: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=1200&auto=format&fit=crop",
+    images: [
+      { id: "f-w-1", src: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=1200&auto=format&fit=crop", filename: "Wardrobe 1" },
+      { id: "f-w-2", src: "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?q=80&w=1200&auto=format&fit=crop", filename: "Wardrobe 2" },
+      { id: "f-w-3", src: "https://images.unsplash.com/photo-1558882224-dda166733046?q=80&w=1200&auto=format&fit=crop", filename: "Wardrobe 3" },
+    ],
     imageCount: 16,
   },
   {
@@ -43,60 +62,39 @@ const FALLBACK_PROJECTS: Project[] = [
     category: "bedroom",
     categoryLabel: "Bedroom",
     coverSrc: "https://lh3.googleusercontent.com/aida-public/AB6AXuCuUZ0bmxxiKWnvhYX_tS2-PYwkCwP-WI27kxrSUc7UgS98BCPhSQ1r6_TfriXhywdUY00RLLH8sh1-j0oIKkGikXWaqDlrFZ5rPtn5gEs3rNMzVDLoHO4BWTs6geyEy3jRrUsIzLxJ8Ih9khdLt9rgbry3GrxtJ0RumFoZl5Vnrsex_dzqZvGyVDIgBYwtDwISm7Qqvij9_napRrnbmu4QnItrevUd9HQiYDPcwGV0T5Mmk6NhsbgY1QvYsul_lijpMloDVwxeGBGT",
+    images: [
+      { id: "f-b-1", src: "https://lh3.googleusercontent.com/aida-public/AB6AXuCuUZ0bmxxiKWnvhYX_tS2-PYwkCwP-WI27kxrSUc7UgS98BCPhSQ1r6_TfriXhywdUY00RLLH8sh1-j0oIKkGikXWaqDlrFZ5rPtn5gEs3rNMzVDLoHO4BWTs6geyEy3jRrUsIzLxJ8Ih9khdLt9rgbry3GrxtJ0RumFoZl5Vnrsex_dzqZvGyVDIgBYwtDwISm7Qqvij9_napRrnbmu4QnItrevUd9HQiYDPcwGV0T5Mmk6NhsbgY1QvYsul_lijpMloDVwxeGBGT", filename: "Bedroom 1" },
+    ],
     imageCount: 14,
-  },
-  {
-    id: "fallback-living-room-warm",
-    name: "Living Room – Warm Luxury Lounge",
-    category: "living-room",
-    categoryLabel: "Living Room",
-    coverSrc: "https://lh3.googleusercontent.com/aida-public/AB6AXuBnf7IHhlnFt4MEJ4OmsbMm7TPs4KNZ42RdsDmkqPAFMYMUY-skbw070g2Gkxd7at73Ezs-E1tw1IQfQVsBqLGbPK2BdyDIhlAQ58-wXYfxSuFtEgXqGC_ZYvLJVS-vEE3TjaKjgCd05I2ZOYfWQELfMuEoPP_QnUAzDDGYjoW-8otjTufT5JZkRW1y-6gxu-kbgl4meu11BVviBlvmOCo7O_F_em2OJpuIA2bWxZVnptdgkiDt-MfVeOz1EKcy0u57PcFo3BTGoEbc",
-    imageCount: 22,
-  },
-  {
-    id: "fallback-semi-full-home-villa",
-    name: "Semi & Full Home – Villa Dago Luxury",
-    category: "semi-full-home",
-    categoryLabel: "Semi & Full Home",
-    coverSrc: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop",
-    imageCount: 32,
-  },
-  {
-    id: "fallback-apartemen-penthouse",
-    name: "Apartemen – Penthouse SCBD",
-    category: "apartemen",
-    categoryLabel: "Apartemen",
-    coverSrc: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200&auto=format&fit=crop",
-    imageCount: 15,
   },
 ];
 
-/** Find first image recursively, returns null if none */
-function findFirstImage(dir: string): string | null {
-  try {
-    const items = fs.readdirSync(dir);
-    for (const item of items) {
-      const full = path.join(dir, item);
-      try {
-        if (!fs.statSync(full).isDirectory() && /\.(jpg|jpeg|png|webp)$/i.test(item)) {
-          return full;
-        }
-      } catch {}
-    }
-    for (const item of items) {
-      const full = path.join(dir, item);
-      try {
-        if (fs.statSync(full).isDirectory()) {
-          const found = findFirstImage(full);
-          if (found) return found;
-        }
-      } catch {}
-    }
-  } catch {}
-  return null;
+function collectProjectImages(dir: string, max: number = 10): ProjectImageItem[] {
+  const list: string[] = [];
+  function recurse(d: string) {
+    try {
+      const items = fs.readdirSync(d);
+      for (const item of items) {
+        const full = path.join(d, item);
+        try {
+          if (fs.statSync(full).isDirectory()) recurse(full);
+          else if (/\.(jpg|jpeg|png|webp|heic)$/i.test(item)) list.push(full);
+        } catch {}
+      }
+    } catch {}
+  }
+  recurse(dir);
+  list.sort();
+  return list.slice(0, max).map((fp) => {
+    const encoded = Buffer.from(fp).toString("base64url");
+    return {
+      id: encoded,
+      src: `/api/portfolio/image?p=${encoded}`,
+      filename: path.basename(fp),
+    };
+  });
 }
 
-/** Count images recursively */
 function countImages(dir: string): number {
   let n = 0;
   try {
@@ -104,49 +102,26 @@ function countImages(dir: string): number {
       const full = path.join(dir, item);
       try {
         if (fs.statSync(full).isDirectory()) n += countImages(full);
-        else if (/\.(jpg|jpeg|png|webp)$/i.test(item)) n++;
+        else if (/\.(jpg|jpeg|png|webp|heic)$/i.test(item)) n++;
       } catch {}
     }
   } catch {}
   return n;
 }
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const category = searchParams.get("category") ?? "all";
-  const search   = (searchParams.get("search") ?? "").toLowerCase().trim();
-  const page     = parseInt(searchParams.get("page") ?? "1", 10);
-
+function scanRootProjects(rootDir: string, projects: Project[], categoryFilter: string, searchQuery: string) {
   try {
-    if (!fs.existsSync(KONTEN_ROOT)) {
-      // Filter fallback projects
-      let filtered = FALLBACK_PROJECTS;
-      if (category !== "all") {
-        filtered = filtered.filter((p) => p.category === category);
-      }
-      if (search) {
-        filtered = filtered.filter(
-          (p) =>
-            p.name.toLowerCase().includes(search) ||
-            p.categoryLabel.toLowerCase().includes(search)
-        );
-      }
-      const total = filtered.length;
-      const totalPages = Math.ceil(total / PAGE_SIZE) || 1;
-      const offset = (Math.max(page, 1) - 1) * PAGE_SIZE;
-      const items = filtered.slice(offset, offset + PAGE_SIZE);
+    if (!fs.existsSync(rootDir)) return;
 
-      return NextResponse.json({ projects: items, total, totalPages, page });
-    }
-
-    const yearFolders = fs.readdirSync(KONTEN_ROOT).filter((d) => {
-      try { return fs.statSync(path.join(KONTEN_ROOT, d)).isDirectory(); } catch { return false; }
+    const entries = fs.readdirSync(rootDir).filter((d) => {
+      try { return fs.statSync(path.join(rootDir, d)).isDirectory(); } catch { return false; }
     });
 
-    const projects: Project[] = [];
+    const isDirectCategoryRoot = entries.some((e) => VALID_CAT_NAMES.has(e));
+    const yearFolders = isDirectCategoryRoot ? ["."] : entries;
 
     for (const yr of yearFolders) {
-      const yearPath = path.join(KONTEN_ROOT, yr);
+      const yearPath = yr === "." ? rootDir : path.join(rootDir, yr);
       const catFolders = fs.readdirSync(yearPath).filter((d) => {
         try { return fs.statSync(path.join(yearPath, d)).isDirectory(); } catch { return false; }
       });
@@ -155,7 +130,6 @@ export async function GET(req: NextRequest) {
         if (!VALID_CAT_NAMES.has(cat)) continue;
 
         const catPath = path.join(yearPath, cat);
-
         const subDirs = fs.readdirSync(catPath).filter((d) => {
           try { return fs.statSync(path.join(catPath, d)).isDirectory(); } catch { return false; }
         });
@@ -164,24 +138,24 @@ export async function GET(req: NextRequest) {
           const imgCount = countImages(catPath);
           if (imgCount === 0) continue;
 
-          const firstImg = findFirstImage(catPath);
-          if (!firstImg) continue;
+          const projImages = collectProjectImages(catPath, 10);
+          if (projImages.length === 0) continue;
 
           const label = normalizeCat(cat);
           const slug  = slugify(label);
           const projName = label;
 
-          if (category !== "all" && slug !== category) continue;
-          if (search && !projName.toLowerCase().includes(search) && !label.toLowerCase().includes(search)) continue;
+          if (categoryFilter !== "all" && slug !== categoryFilter) continue;
+          if (searchQuery && !projName.toLowerCase().includes(searchQuery) && !label.toLowerCase().includes(searchQuery)) continue;
 
-          const projId  = Buffer.from(catPath).toString("base64url");
-          const coverId = Buffer.from(firstImg).toString("base64url");
+          const projId = Buffer.from(catPath).toString("base64url");
           projects.push({
             id: projId,
             name: projName,
             category: slug,
             categoryLabel: label,
-            coverSrc: `/api/portfolio/image?p=${coverId}`,
+            coverSrc: projImages[0].src,
+            images: projImages,
             imageCount: imgCount,
           });
           continue;
@@ -194,36 +168,64 @@ export async function GET(req: NextRequest) {
               try { return fs.statSync(path.join(stylePath, d)).isDirectory(); } catch { return false; }
             });
 
-            for (const client of clientDirs) {
-              const projPath = path.join(stylePath, client);
-              const imgCount = countImages(projPath);
+            if (clientDirs.length === 0) {
+              const imgCount = countImages(stylePath);
               if (imgCount === 0) continue;
 
-              const firstImg = findFirstImage(projPath);
-              if (!firstImg) continue;
+              const projImages = collectProjectImages(stylePath, 10);
+              if (projImages.length === 0) continue;
 
-              const relPath = path.join(yr, cat, style, client);
-              const validated = getValidatedProjectInfo(cat, client, relPath);
+              const relPath = path.join(yr, cat, style);
+              const validated = getValidatedProjectInfo(cat, style, relPath);
 
-              if (category !== "all" && validated.categorySlug !== category) continue;
-
+              if (categoryFilter !== "all" && validated.categorySlug !== categoryFilter) continue;
               if (
-                search &&
-                !validated.projectName.toLowerCase().includes(search) &&
-                !validated.categoryLabel.toLowerCase().includes(search) &&
-                !client.toLowerCase().includes(search)
+                searchQuery &&
+                !validated.projectName.toLowerCase().includes(searchQuery) &&
+                !validated.categoryLabel.toLowerCase().includes(searchQuery)
               ) continue;
 
-              const projId  = Buffer.from(projPath).toString("base64url");
-              const coverId = Buffer.from(firstImg).toString("base64url");
+              const projId = Buffer.from(stylePath).toString("base64url");
               projects.push({
                 id: projId,
                 name: validated.projectName,
                 category: validated.categorySlug,
                 categoryLabel: validated.categoryLabel,
-                coverSrc: `/api/portfolio/image?p=${coverId}`,
+                coverSrc: projImages[0].src,
+                images: projImages,
                 imageCount: imgCount,
               });
+            } else {
+              for (const client of clientDirs) {
+                const projPath = path.join(stylePath, client);
+                const imgCount = countImages(projPath);
+                if (imgCount === 0) continue;
+
+                const projImages = collectProjectImages(projPath, 10);
+                if (projImages.length === 0) continue;
+
+                const relPath = path.join(yr, cat, style, client);
+                const validated = getValidatedProjectInfo(cat, client, relPath);
+
+                if (categoryFilter !== "all" && validated.categorySlug !== categoryFilter) continue;
+                if (
+                  searchQuery &&
+                  !validated.projectName.toLowerCase().includes(searchQuery) &&
+                  !validated.categoryLabel.toLowerCase().includes(searchQuery) &&
+                  !client.toLowerCase().includes(searchQuery)
+                ) continue;
+
+                const projId = Buffer.from(projPath).toString("base64url");
+                projects.push({
+                  id: projId,
+                  name: validated.projectName,
+                  category: validated.categorySlug,
+                  categoryLabel: validated.categoryLabel,
+                  coverSrc: projImages[0].src,
+                  images: projImages,
+                  imageCount: imgCount,
+                });
+              }
             }
           }
           continue;
@@ -234,34 +236,53 @@ export async function GET(req: NextRequest) {
           const imgCount = countImages(projPath);
           if (imgCount === 0) continue;
 
-          const firstImg = findFirstImage(projPath);
-          if (!firstImg) continue;
+          const projImages = collectProjectImages(projPath, 10);
+          if (projImages.length === 0) continue;
 
           const relPath = path.join(yr, cat, subDir);
           const validated = getValidatedProjectInfo(cat, subDir, relPath);
 
-          if (category !== "all" && validated.categorySlug !== category) continue;
+          if (categoryFilter !== "all" && validated.categorySlug !== categoryFilter) continue;
 
           if (
-            search &&
-            !validated.projectName.toLowerCase().includes(search) &&
-            !validated.categoryLabel.toLowerCase().includes(search) &&
-            !subDir.toLowerCase().includes(search)
+            searchQuery &&
+            !validated.projectName.toLowerCase().includes(searchQuery) &&
+            !validated.categoryLabel.toLowerCase().includes(searchQuery) &&
+            !subDir.toLowerCase().includes(searchQuery)
           ) continue;
 
-          const projId  = Buffer.from(projPath).toString("base64url");
-          const coverId = Buffer.from(firstImg).toString("base64url");
+          const projId = Buffer.from(projPath).toString("base64url");
           projects.push({
             id: projId,
             name: validated.projectName,
             category: validated.categorySlug,
             categoryLabel: validated.categoryLabel,
-            coverSrc: `/api/portfolio/image?p=${coverId}`,
+            coverSrc: projImages[0].src,
+            images: projImages,
             imageCount: imgCount,
           });
         }
       }
     }
+  } catch (err) {
+    console.error(`Error scanning root projects in ${rootDir}:`, err);
+  }
+}
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const category = searchParams.get("category") ?? "all";
+  const search   = (searchParams.get("search") ?? "").toLowerCase().trim();
+  const page     = parseInt(searchParams.get("page") ?? "1", 10);
+
+  try {
+    const projects: Project[] = [];
+
+    // Scan primary local workspace Portofolio/FULLHOME
+    scanRootProjects(LOCAL_KONTEN, projects, category, search);
+
+    // Scan external F:\KONTEN drive if present
+    scanRootProjects(EXTERNAL_KONTEN, projects, category, search);
 
     if (projects.length === 0) {
       let filtered = FALLBACK_PROJECTS;
@@ -283,6 +304,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ projects: items, total, totalPages, page });
     }
 
+    // Sort projects by photo count descending
     projects.sort((a, b) => b.imageCount - a.imageCount);
 
     const total      = projects.length;

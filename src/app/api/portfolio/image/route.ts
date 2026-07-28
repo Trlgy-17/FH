@@ -2,13 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
-const KONTEN_ROOT = "F:\\KONTEN";
+const LOCAL_KONTEN = path.join(process.cwd(), "Portofolio", "FULLHOME");
+const EXTERNAL_KONTEN = "F:\\KONTEN";
 
-// Whitelist: only serve files inside KONTEN_ROOT
 function isPathSafe(filePath: string): boolean {
   const resolved = path.resolve(filePath);
-  const root = path.resolve(KONTEN_ROOT);
-  return resolved.startsWith(root);
+  return (
+    resolved.startsWith(path.resolve(LOCAL_KONTEN)) ||
+    resolved.startsWith(path.resolve(EXTERNAL_KONTEN))
+  );
 }
 
 const MIME: Record<string, string> = {
@@ -16,6 +18,7 @@ const MIME: Record<string, string> = {
   ".jpeg": "image/jpeg",
   ".png": "image/png",
   ".webp": "image/webp",
+  ".heic": "image/heic",
 };
 
 export async function GET(req: NextRequest) {

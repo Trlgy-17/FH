@@ -2,7 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronLeft, ChevronRight, ZoomIn, MessageCircle, MapPin } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, ZoomIn, MessageCircle, MapPin, Images, ArrowUpRight } from "lucide-react";
+
+export interface ProjectImage {
+  id: string;
+  src: string;
+  filename: string;
+}
 
 export interface Project {
   id: string;
@@ -10,13 +16,147 @@ export interface Project {
   category: string;
   categoryLabel: string;
   coverSrc: string;
+  images?: ProjectImage[];
   imageCount: number;
 }
 
-export interface ProjectImage {
-  id: string;
-  src: string;
-  filename: string;
+// ─── Project Card With Embedded Image Slider ──────────────────────────────────
+export function ProjectCardWithSlider({
+  project,
+  index,
+  onClick,
+}: {
+  project: Project;
+  index: number;
+  onClick: () => void;
+}) {
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [loaded, setLoaded] = useState(false);
+
+  const parts = project.name.split(" - ");
+  const clientName = parts[0];
+  const location = parts.slice(1).join(" - ");
+
+  const slides: ProjectImage[] =
+    project.images && project.images.length > 0
+      ? project.images
+      : [{ id: "cover", src: project.coverSrc, filename: project.name }];
+
+  const currentSlide = slides[activeSlide] || slides[0];
+
+  const handlePrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  };
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveSlide((prev) => (prev + 1) % slides.length);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, delay: Math.min(index * 0.04, 0.4) }}
+      className="p-2 rounded-3xl bg-black/5 dark:bg-white/5 border border-foreground/10 cursor-pointer group hover:border-foreground/25 transition-all duration-500 flex flex-col h-full"
+      onClick={onClick}
+    >
+      {/* Inner Core */}
+      <div className="bg-background rounded-[calc(1.5rem-0.25rem)] overflow-hidden border border-foreground/5 shadow-xs flex flex-col h-full justify-between">
+        {/* Slider Container */}
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted group/slider">
+          {!loaded && (
+            <div className="absolute inset-0 bg-gradient-to-br from-black/5 to-black/10 animate-pulse" />
+          )}
+          <motion.img
+            key={currentSlide.src}
+            initial={{ opacity: 0.85 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
+            src={currentSlide.src}
+            alt={`${project.categoryLabel} – ${project.name}`}
+            loading="lazy"
+            onLoad={() => setLoaded(true)}
+            className={`w-full h-full object-cover transition-all duration-500 ease-out ${
+              loaded ? "opacity-100" : "opacity-0"
+            }`}
+          />
+
+          {/* Top Category Badge */}
+          <div className="absolute top-3 left-3 z-10">
+            <span className="text-[10px] font-mono tracking-widest uppercase text-primary bg-background/90 backdrop-blur-md px-2.5 py-1 rounded-full border border-foreground/10 shadow-xs">
+              {project.categoryLabel}
+            </span>
+          </div>
+
+          {/* Top Photo Count Badge */}
+          <div className="absolute top-3 right-3 z-10">
+            <span className="text-[10px] font-mono tracking-widest text-white bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5">
+              <Images className="w-3 h-3" />
+              {project.imageCount} Foto
+            </span>
+          </div>
+
+          {/* Slider Prev / Next Controls */}
+          {slides.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={handlePrev}
+                aria-label="Sebelumnya"
+                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 hover:bg-black/75 text-white transition-all opacity-0 group-hover/slider:opacity-100 z-20 backdrop-blur-xs hover:scale-105"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={handleNext}
+                aria-label="Berikutnya"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 hover:bg-black/75 text-white transition-all opacity-0 group-hover/slider:opacity-100 z-20 backdrop-blur-xs hover:scale-105"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+
+              {/* Slider Dots */}
+              <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20 px-2 py-1 rounded-full bg-black/30 backdrop-blur-xs">
+                {slides.slice(0, 7).map((_, i) => (
+                  <span
+                    key={i}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveSlide(i);
+                    }}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      i === activeSlide ? "w-4 bg-white" : "w-1.5 bg-white/50 hover:bg-white/80"
+                    }`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Card Info */}
+        <div className="p-4 sm:p-5 flex flex-col justify-between flex-1 gap-3">
+          <div>
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="font-serif text-base font-medium text-primary truncate leading-snug group-hover:text-secondary transition-colors">
+                {clientName}
+              </h3>
+              <ArrowUpRight className="w-4 h-4 text-warm-gray group-hover:text-primary transition-colors shrink-0" />
+            </div>
+            {location && (
+              <p className="flex items-center gap-1 font-sans text-xs text-warm-gray mt-1 truncate">
+                <MapPin className="w-3 h-3 text-secondary shrink-0" />
+                {location}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
 }
 
 // ─── Lightbox Component ───────────────────────────────────────────────────────
@@ -57,7 +197,6 @@ export function Lightbox({
       className="fixed inset-0 z-[300] flex items-center justify-center bg-black/97 backdrop-blur-xl"
       onClick={onClose}
     >
-      {/* Top bar */}
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-6 py-4 bg-gradient-to-b from-black/80 via-black/40 to-transparent z-10">
         <p className="font-sans text-xs sm:text-sm text-white/80 font-mono tracking-wider truncate max-w-xs">{projectName}</p>
         <span className="font-mono text-xs text-white/60 mx-4 shrink-0 bg-white/10 px-3 py-1 rounded-full border border-white/10">
@@ -72,7 +211,6 @@ export function Lightbox({
         </button>
       </div>
 
-      {/* Prev button */}
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -84,7 +222,6 @@ export function Lightbox({
         <ChevronLeft className="w-6 h-6" />
       </button>
 
-      {/* Image */}
       <motion.div
         key={img.id}
         initial={{ opacity: 0, scale: 0.98 }}
@@ -100,7 +237,6 @@ export function Lightbox({
         />
       </motion.div>
 
-      {/* Next button */}
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -211,7 +347,6 @@ export function ProjectModal({
           className="bg-background rounded-[calc(1.5rem-0.25rem)] overflow-hidden flex flex-col h-full border border-foreground/10 pointer-events-auto"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Modal Header */}
           <div className="flex items-start justify-between gap-4 px-6 sm:px-8 py-5 border-b border-foreground/10 shrink-0 bg-background/90 backdrop-blur-md">
             <div>
               <span className="text-[10px] font-mono tracking-widest uppercase text-secondary font-semibold">
@@ -250,7 +385,6 @@ export function ProjectModal({
             </div>
           </div>
 
-          {/* Photo Grid */}
           <div className="flex-1 overflow-y-auto p-4 sm:p-6">
             {loading ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -269,7 +403,6 @@ export function ProjectModal({
         </div>
       </motion.div>
 
-      {/* Lightbox */}
       <AnimatePresence>
         {lightboxIndex !== null && (
           <Lightbox

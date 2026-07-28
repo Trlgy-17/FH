@@ -2,10 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
-const KONTEN_ROOT = "F:\\KONTEN";
+const LOCAL_KONTEN = path.join(process.cwd(), "Portofolio", "FULLHOME");
+const EXTERNAL_KONTEN = "F:\\KONTEN";
 
 function isPathSafe(filePath: string): boolean {
-  return path.resolve(filePath).startsWith(path.resolve(KONTEN_ROOT));
+  const resolved = path.resolve(filePath);
+  return (
+    resolved.startsWith(path.resolve(LOCAL_KONTEN)) ||
+    resolved.startsWith(path.resolve(EXTERNAL_KONTEN))
+  );
 }
 
 function collectImages(dir: string, results: string[]) {
@@ -14,7 +19,7 @@ function collectImages(dir: string, results: string[]) {
       const full = path.join(dir, item);
       try {
         if (fs.statSync(full).isDirectory()) collectImages(full, results);
-        else if (/\.(jpg|jpeg|png|webp)$/i.test(item)) results.push(full);
+        else if (/\.(jpg|jpeg|png|webp|heic)$/i.test(item)) results.push(full);
       } catch {}
     }
   } catch {}
@@ -50,7 +55,7 @@ export async function GET(req: NextRequest) {
 
   if (!encodedId) return NextResponse.json({ images: [] }, { status: 400 });
 
-  if (encodedId.startsWith("fallback-") || !fs.existsSync(KONTEN_ROOT)) {
+  if (encodedId.startsWith("fallback-")) {
     const list = FALLBACK_IMAGES[encodedId] ?? FALLBACK_IMAGES["default"];
     const images: ProjectImage[] = list.map((url, idx) => ({
       id: `img-${idx}`,
@@ -63,6 +68,16 @@ export async function GET(req: NextRequest) {
   try {
     const projPath = Buffer.from(encodedId, "base64url").toString("utf-8");
     if (!isPathSafe(projPath)) return NextResponse.json({ images: [] }, { status: 403 });
+
+    if (!fs.existsSync(projPath)) {
+      const list = FALLBACK_IMAGES["default"];
+      const images: ProjectImage[] = list.map((url, idx) => ({
+        id: `img-${idx}`,
+        src: url,
+        filename: `Foto Dokumentasi ${idx + 1}.jpg`,
+      }));
+      return NextResponse.json({ images, total: images.length });
+    }
 
     const raw: string[] = [];
     collectImages(projPath, raw);

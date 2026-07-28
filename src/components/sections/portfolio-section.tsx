@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { Reveal } from "@/components/shared/reveal";
-import { ArrowUpRight, MapPin, Images } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ProjectModal, type Project } from "@/components/shared/project-modal";
+import { ProjectModal, ProjectCardWithSlider, type Project } from "@/components/shared/project-modal";
 import { AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
@@ -34,7 +34,7 @@ export function PortfolioSection() {
     fetch(`/api/portfolio/projects?category=${selectedCategory}&page=1`)
       .then((r) => r.json())
       .then((d) => {
-        setProjects((d.projects ?? []).slice(0, 5));
+        setProjects((d.projects ?? []).slice(0, 6));
       })
       .catch((err) => console.error("Projects fetch error:", err))
       .finally(() => setLoading(false));
@@ -84,10 +84,10 @@ export function PortfolioSection() {
           </div>
         </Reveal>
 
-        {/* Asymmetrical Bento Grid */}
+        {/* Interactive Grid With Card Sliders */}
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 3 }).map((_, i) => (
+            {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
                 className="aspect-[4/3] rounded-3xl bg-black/5 animate-pulse border border-foreground/10"
@@ -99,78 +99,16 @@ export function PortfolioSection() {
             <p className="font-sans text-warm-gray text-sm">Tidak ada proyek dalam kategori ini.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
-            {projects.map((project, idx) => {
-              const colSpanClass =
-                idx % 3 === 0
-                  ? "lg:col-span-7"
-                  : idx % 3 === 1
-                  ? "lg:col-span-5"
-                  : "lg:col-span-12";
-
-              const aspectClass = idx % 3 === 2 ? "aspect-[16/9]" : "aspect-[4/3] md:aspect-[5/4]";
-
-              const parts = project.name.split(" - ");
-              const clientName = parts[0];
-              const location = parts.slice(1).join(" - ");
-
-              return (
-                <Reveal key={project.id} delay={0.1 * (idx % 4)} className={colSpanClass}>
-                  {/* Double-Bezel Card Outer Shell */}
-                  <div
-                    onClick={() => setSelectedProject(project)}
-                    className="p-2.5 rounded-3xl bg-black/5 dark:bg-white/5 border border-foreground/10 cursor-pointer group hover:border-foreground/25 transition-all duration-500 flex flex-col h-full"
-                  >
-                    {/* Inner Core */}
-                    <div className="bg-background rounded-[calc(1.5rem-0.25rem)] overflow-hidden border border-foreground/5 shadow-xs flex flex-col h-full justify-between">
-                      <div className={cn("relative w-full overflow-hidden bg-muted", aspectClass)}>
-                        <img
-                          src={project.coverSrc}
-                          alt={project.name}
-                          loading="lazy"
-                          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                        />
-                        <div className="absolute top-4 left-4 z-10">
-                          <span className="text-[10px] font-mono tracking-widest uppercase text-primary bg-background/90 backdrop-blur-md px-3 py-1 rounded-full border border-foreground/10 shadow-xs">
-                            {project.categoryLabel}
-                          </span>
-                        </div>
-                        <div className="absolute top-4 right-4 z-10">
-                          <span className="text-[10px] font-mono tracking-widest text-white bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5">
-                            <Images className="w-3 h-3" />
-                            {project.imageCount} Foto
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="p-6 md:p-7 flex flex-col justify-between flex-1 gap-4">
-                        <div>
-                          <div className="flex items-center justify-between gap-4 mb-2">
-                            <h3 className="font-serif text-xl md:text-2xl text-primary font-medium group-hover:text-secondary transition-colors line-clamp-1">
-                              {clientName}
-                            </h3>
-                            <div className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300 shrink-0">
-                              <ArrowUpRight className="w-4 h-4" />
-                            </div>
-                          </div>
-                          <p className="font-sans text-xs md:text-sm text-warm-gray leading-relaxed line-clamp-2">
-                            Dokumentasi hasil pengerjaan kustom interior dengan standar kualitas tinggi untuk {clientName}.
-                          </p>
-                        </div>
-
-                        <div className="flex items-center justify-between pt-4 border-t border-foreground/10 text-xs font-sans text-warm-gray">
-                          <span className="flex items-center gap-1.5 font-medium text-primary">
-                            <MapPin className="w-3.5 h-3.5 text-secondary" />
-                            {location || "Jabodetabek / Jawa"}
-                          </span>
-                          <span className="font-mono text-[11px]">Buka Dokumentasi ↗</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Reveal>
-              );
-            })}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {projects.map((project, idx) => (
+              <Reveal key={project.id} delay={0.1 * (idx % 3)}>
+                <ProjectCardWithSlider
+                  project={project}
+                  index={idx}
+                  onClick={() => setSelectedProject(project)}
+                />
+              </Reveal>
+            ))}
           </div>
         )}
 
