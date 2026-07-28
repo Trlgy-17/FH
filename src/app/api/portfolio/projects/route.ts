@@ -3,7 +3,6 @@ import fs from "fs";
 import path from "path";
 import {
   VALID_CAT_NAMES,
-  STYLE_CATEGORIES,
   getValidatedProjectInfo,
   normalizeCat,
   slugify,
@@ -54,23 +53,6 @@ function countImages(dir: string): number {
   return n;
 }
 
-/** Convert raw folder name to clean display name */
-function formatProjectName(raw: string): string {
-  const cleaned = raw.replace(/^\d+[\.\s]+/, "").trim();
-  return cleaned
-    .split(" ")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-    .join(" ")
-    .replace(/\bJakpus\b/gi, "Jakarta Pusat")
-    .replace(/\bJaksel\b/gi, "Jakarta Selatan")
-    .replace(/\bJakbar\b/gi, "Jakarta Barat")
-    .replace(/\bJakut\b/gi, "Jakarta Utara")
-    .replace(/\bJaktim\b/gi, "Jakarta Timur")
-    .replace(/\bTangsel\b/gi, "Tangerang Selatan")
-    .replace(/\bTanggerang\b/gi, "Tangerang")
-    .replace(/\bBojonsoang\b/gi, "Bojongsoang");
-}
-
 export interface Project {
   id: string;
   name: string;
@@ -87,6 +69,10 @@ export async function GET(req: NextRequest) {
   const page     = parseInt(searchParams.get("page") ?? "1", 10);
 
   try {
+    if (!fs.existsSync(KONTEN_ROOT)) {
+      return NextResponse.json({ projects: [], total: 0, totalPages: 0, page: 1 });
+    }
+
     const yearFolders = fs.readdirSync(KONTEN_ROOT).filter((d) => {
       try { return fs.statSync(path.join(KONTEN_ROOT, d)).isDirectory(); } catch { return false; }
     });
@@ -135,7 +121,52 @@ export async function GET(req: NextRequest) {
           continue;
         }
 
-        // Style subfolders or standard project subfolders
+        if (cat === "KITCHENSET") {
+          // Process nested client projects under KITCHENSET styles
+          for (const style of subDirs) {
+            const stylePath = path.join(catPath, style);
+            const clientDirs = fs.readdirSync(stylePath).filter((d) => {
+              try { return fs.statSync(path.join(stylePath, d)).isDirectory(); } catch { return false; }
+            });
+
+            for (const client of clientDirs) {
+              const projPath = path.join(stylePath, client);
+              const imgCount = countImages(projPath);
+              if (imgCount === 0) continue;
+
+              const firstImg = findFirstImage(projPath);
+              if (!firstImg) continue;
+
+              const relPath = path.join(yr, cat, style, client);
+              const validated = getValidatedProjectInfo(cat, client, relPath);
+
+              // Category filter
+              if (category !== "all" && validated.categorySlug !== category) continue;
+
+              // Search filter
+              if (
+                search &&
+                !validated.projectName.toLowerCase().includes(search) &&
+                !validated.categoryLabel.toLowerCase().includes(search) &&
+                !client.toLowerCase().includes(search)
+              ) continue;
+
+              const projId  = Buffer.from(projPath).toString("base64url");
+              const coverId = Buffer.from(firstImg).toString("base64url");
+              projects.push({
+                id: projId,
+                name: validated.projectName,
+                category: validated.categorySlug,
+                categoryLabel: validated.categoryLabel,
+                coverSrc: `/api/portfolio/image?p=${coverId}`,
+                imageCount: imgCount,
+              });
+            }
+          }
+          continue;
+        }
+
+        // Standard categories
         for (const subDir of subDirs) {
           const projPath = path.join(catPath, subDir);
           const imgCount = countImages(projPath);
@@ -147,19 +178,13 @@ export async function GET(req: NextRequest) {
           const relPath = path.join(yr, cat, subDir);
           const validated = getValidatedProjectInfo(cat, subDir, relPath);
 
-          // Category filter check
+          // Category filter
           if (category !== "all" && validated.categorySlug !== category) continue;
 
-          // Project name format (Standard client vs validated style name)
-          let finalProjName = validated.projectName;
-          if (!STYLE_CATEGORIES.has(cat) && !relPath.toLowerCase().includes('kitchenset/semiklasik')) {
-            finalProjName = formatProjectName(subDir);
-          }
-
-          // Search query check
+          // Search filter
           if (
             search &&
-            !finalProjName.toLowerCase().includes(search) &&
+            !validated.projectName.toLowerCase().includes(search) &&
             !validated.categoryLabel.toLowerCase().includes(search) &&
             !subDir.toLowerCase().includes(search)
           ) continue;
@@ -168,7 +193,7 @@ export async function GET(req: NextRequest) {
           const coverId = Buffer.from(firstImg).toString("base64url");
           projects.push({
             id: projId,
-            name: finalProjName,
+            name: validated.projectName,
             category: validated.categorySlug,
             categoryLabel: validated.categoryLabel,
             coverSrc: `/api/portfolio/image?p=${coverId}`,
