@@ -120,7 +120,7 @@ function countImages(dir: string): number {
       const full = path.join(dir, item);
       try {
         if (fs.statSync(full).isDirectory()) n += countImages(full);
-        else if (/\.(jpg|jpeg|png|webp|heic)$/i.test(item)) n++;
+        else if (/\.(jpg|jpeg|png|webp)$/i.test(item)) n++;
       } catch {}
     }
   } catch {}
@@ -131,13 +131,11 @@ function scanCategoryRoot(rootDir: string, catMap: Map<string, { label: string; 
   try {
     if (!fs.existsSync(rootDir)) return;
 
-    // Check if rootDir contains category folders directly or year folders
     const entries = fs.readdirSync(rootDir).filter((d) => {
       try { return fs.statSync(path.join(rootDir, d)).isDirectory(); } catch { return false; }
     });
 
     const isDirectCategoryRoot = entries.some((e) => VALID_CAT_NAMES.has(e));
-
     const yearFolders = isDirectCategoryRoot ? ["."] : entries;
 
     for (const yr of yearFolders) {
@@ -212,10 +210,7 @@ export async function GET() {
   try {
     const catMap = new Map<string, { label: string; count: number }>();
 
-    // Primary: Scan local Portofolio/FULLHOME workspace
     scanCategoryRoot(LOCAL_KONTEN, catMap);
-
-    // Secondary: Scan external F:\KONTEN drive if present
     scanCategoryRoot(EXTERNAL_KONTEN, catMap);
 
     const categories: PortfolioCategory[] = Array.from(catMap.entries())

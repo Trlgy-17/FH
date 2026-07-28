@@ -19,7 +19,7 @@ function collectImages(dir: string, results: string[]) {
       const full = path.join(dir, item);
       try {
         if (fs.statSync(full).isDirectory()) collectImages(full, results);
-        else if (/\.(jpg|jpeg|png|webp|heic)$/i.test(item)) results.push(full);
+        else if (/\.(jpg|jpeg|png|webp)$/i.test(item)) results.push(full);
       } catch {}
     }
   } catch {}

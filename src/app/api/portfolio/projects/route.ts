@@ -69,6 +69,7 @@ const FALLBACK_PROJECTS: Project[] = [
   },
 ];
 
+/** Collect web-compatible images (excluding HEIC) */
 function collectProjectImages(dir: string, max: number = 10): ProjectImageItem[] {
   const list: string[] = [];
   function recurse(d: string) {
@@ -78,7 +79,7 @@ function collectProjectImages(dir: string, max: number = 10): ProjectImageItem[]
         const full = path.join(d, item);
         try {
           if (fs.statSync(full).isDirectory()) recurse(full);
-          else if (/\.(jpg|jpeg|png|webp|heic)$/i.test(item)) list.push(full);
+          else if (/\.(jpg|jpeg|png|webp)$/i.test(item)) list.push(full);
         } catch {}
       }
     } catch {}
@@ -102,7 +103,7 @@ function countImages(dir: string): number {
       const full = path.join(dir, item);
       try {
         if (fs.statSync(full).isDirectory()) n += countImages(full);
-        else if (/\.(jpg|jpeg|png|webp|heic)$/i.test(item)) n++;
+        else if (/\.(jpg|jpeg|png|webp)$/i.test(item)) n++;
       } catch {}
     }
   } catch {}
