@@ -32,6 +32,16 @@ export interface PortfolioCategory {
   count: number; // image count
 }
 
+const FALLBACK_CATEGORIES: PortfolioCategory[] = [
+  { id: "kitchen-set", label: "Kitchen Set", count: 48 },
+  { id: "wardrobe", label: "Wardrobe", count: 38 },
+  { id: "bedroom", label: "Bedroom", count: 26 },
+  { id: "living-room", label: "Living Room", count: 35 },
+  { id: "semi-full-home", label: "Semi & Full Home", count: 52 },
+  { id: "apartemen", label: "Apartemen", count: 19 },
+  { id: "interior-kantor", label: "Interior Kantor", count: 14 },
+];
+
 export function normalizeCat(raw: string): string {
   return CATEGORY_MAP[raw] ?? raw.replace(/_/g, " ").trim();
 }
@@ -122,7 +132,7 @@ function countImages(dir: string): number {
 export async function GET() {
   try {
     if (!fs.existsSync(KONTEN_ROOT)) {
-      return NextResponse.json({ categories: [] });
+      return NextResponse.json({ categories: FALLBACK_CATEGORIES });
     }
 
     const yearFolders = fs.readdirSync(KONTEN_ROOT).filter((d) => {
@@ -203,9 +213,9 @@ export async function GET() {
       .filter((c) => c.count > 0)
       .sort((a, b) => b.count - a.count);
 
-    return NextResponse.json({ categories });
+    return NextResponse.json({ categories: categories.length > 0 ? categories : FALLBACK_CATEGORIES });
   } catch (err) {
     console.error("Portfolio categories error:", err);
-    return NextResponse.json({ categories: [] }, { status: 500 });
+    return NextResponse.json({ categories: FALLBACK_CATEGORIES });
   }
 }

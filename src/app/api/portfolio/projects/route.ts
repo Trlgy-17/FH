@@ -11,11 +11,70 @@ import {
 const KONTEN_ROOT = "F:\\KONTEN";
 const PAGE_SIZE = 20;
 
+export interface Project {
+  id: string;
+  name: string;
+  category: string;
+  categoryLabel: string;
+  coverSrc: string;
+  imageCount: number;
+}
+
+const FALLBACK_PROJECTS: Project[] = [
+  {
+    id: "fallback-kitchen-set-minimalis",
+    name: "Kitchen Set – Minimalis Warm Oak",
+    category: "kitchen-set",
+    categoryLabel: "Kitchen Set",
+    coverSrc: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=1200&auto=format&fit=crop",
+    imageCount: 18,
+  },
+  {
+    id: "fallback-wardrobe-semiklasik",
+    name: "Wardrobe – Semiklasik Glass Door",
+    category: "wardrobe",
+    categoryLabel: "Wardrobe",
+    coverSrc: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=1200&auto=format&fit=crop",
+    imageCount: 16,
+  },
+  {
+    id: "fallback-bedroom-japandi",
+    name: "Bedroom – Japandi Master Suite",
+    category: "bedroom",
+    categoryLabel: "Bedroom",
+    coverSrc: "https://lh3.googleusercontent.com/aida-public/AB6AXuCuUZ0bmxxiKWnvhYX_tS2-PYwkCwP-WI27kxrSUc7UgS98BCPhSQ1r6_TfriXhywdUY00RLLH8sh1-j0oIKkGikXWaqDlrFZ5rPtn5gEs3rNMzVDLoHO4BWTs6geyEy3jRrUsIzLxJ8Ih9khdLt9rgbry3GrxtJ0RumFoZl5Vnrsex_dzqZvGyVDIgBYwtDwISm7Qqvij9_napRrnbmu4QnItrevUd9HQiYDPcwGV0T5Mmk6NhsbgY1QvYsul_lijpMloDVwxeGBGT",
+    imageCount: 14,
+  },
+  {
+    id: "fallback-living-room-warm",
+    name: "Living Room – Warm Luxury Lounge",
+    category: "living-room",
+    categoryLabel: "Living Room",
+    coverSrc: "https://lh3.googleusercontent.com/aida-public/AB6AXuBnf7IHhlnFt4MEJ4OmsbMm7TPs4KNZ42RdsDmkqPAFMYMUY-skbw070g2Gkxd7at73Ezs-E1tw1IQfQVsBqLGbPK2BdyDIhlAQ58-wXYfxSuFtEgXqGC_ZYvLJVS-vEE3TjaKjgCd05I2ZOYfWQELfMuEoPP_QnUAzDDGYjoW-8otjTufT5JZkRW1y-6gxu-kbgl4meu11BVviBlvmOCo7O_F_em2OJpuIA2bWxZVnptdgkiDt-MfVeOz1EKcy0u57PcFo3BTGoEbc",
+    imageCount: 22,
+  },
+  {
+    id: "fallback-semi-full-home-villa",
+    name: "Semi & Full Home – Villa Dago Luxury",
+    category: "semi-full-home",
+    categoryLabel: "Semi & Full Home",
+    coverSrc: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop",
+    imageCount: 32,
+  },
+  {
+    id: "fallback-apartemen-penthouse",
+    name: "Apartemen – Penthouse SCBD",
+    category: "apartemen",
+    categoryLabel: "Apartemen",
+    coverSrc: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200&auto=format&fit=crop",
+    imageCount: 15,
+  },
+];
+
 /** Find first image recursively, returns null if none */
 function findFirstImage(dir: string): string | null {
   try {
     const items = fs.readdirSync(dir);
-    // Files first (more likely to be images at top level)
     for (const item of items) {
       const full = path.join(dir, item);
       try {
@@ -24,7 +83,6 @@ function findFirstImage(dir: string): string | null {
         }
       } catch {}
     }
-    // Then recurse into subdirectories
     for (const item of items) {
       const full = path.join(dir, item);
       try {
@@ -53,15 +111,6 @@ function countImages(dir: string): number {
   return n;
 }
 
-export interface Project {
-  id: string;
-  name: string;
-  category: string;
-  categoryLabel: string;
-  coverSrc: string;
-  imageCount: number;
-}
-
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const category = searchParams.get("category") ?? "all";
@@ -70,7 +119,24 @@ export async function GET(req: NextRequest) {
 
   try {
     if (!fs.existsSync(KONTEN_ROOT)) {
-      return NextResponse.json({ projects: [], total: 0, totalPages: 0, page: 1 });
+      // Filter fallback projects
+      let filtered = FALLBACK_PROJECTS;
+      if (category !== "all") {
+        filtered = filtered.filter((p) => p.category === category);
+      }
+      if (search) {
+        filtered = filtered.filter(
+          (p) =>
+            p.name.toLowerCase().includes(search) ||
+            p.categoryLabel.toLowerCase().includes(search)
+        );
+      }
+      const total = filtered.length;
+      const totalPages = Math.ceil(total / PAGE_SIZE) || 1;
+      const offset = (Math.max(page, 1) - 1) * PAGE_SIZE;
+      const items = filtered.slice(offset, offset + PAGE_SIZE);
+
+      return NextResponse.json({ projects: items, total, totalPages, page });
     }
 
     const yearFolders = fs.readdirSync(KONTEN_ROOT).filter((d) => {
@@ -122,7 +188,6 @@ export async function GET(req: NextRequest) {
         }
 
         if (cat === "KITCHENSET") {
-          // Process nested client projects under KITCHENSET styles
           for (const style of subDirs) {
             const stylePath = path.join(catPath, style);
             const clientDirs = fs.readdirSync(stylePath).filter((d) => {
@@ -140,10 +205,8 @@ export async function GET(req: NextRequest) {
               const relPath = path.join(yr, cat, style, client);
               const validated = getValidatedProjectInfo(cat, client, relPath);
 
-              // Category filter
               if (category !== "all" && validated.categorySlug !== category) continue;
 
-              // Search filter
               if (
                 search &&
                 !validated.projectName.toLowerCase().includes(search) &&
@@ -166,7 +229,6 @@ export async function GET(req: NextRequest) {
           continue;
         }
 
-        // Standard categories
         for (const subDir of subDirs) {
           const projPath = path.join(catPath, subDir);
           const imgCount = countImages(projPath);
@@ -178,10 +240,8 @@ export async function GET(req: NextRequest) {
           const relPath = path.join(yr, cat, subDir);
           const validated = getValidatedProjectInfo(cat, subDir, relPath);
 
-          // Category filter
           if (category !== "all" && validated.categorySlug !== category) continue;
 
-          // Search filter
           if (
             search &&
             !validated.projectName.toLowerCase().includes(search) &&
@@ -203,7 +263,26 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Sort: most photos first
+    if (projects.length === 0) {
+      let filtered = FALLBACK_PROJECTS;
+      if (category !== "all") {
+        filtered = filtered.filter((p) => p.category === category);
+      }
+      if (search) {
+        filtered = filtered.filter(
+          (p) =>
+            p.name.toLowerCase().includes(search) ||
+            p.categoryLabel.toLowerCase().includes(search)
+        );
+      }
+      const total = filtered.length;
+      const totalPages = Math.ceil(total / PAGE_SIZE) || 1;
+      const offset = (Math.max(page, 1) - 1) * PAGE_SIZE;
+      const items = filtered.slice(offset, offset + PAGE_SIZE);
+
+      return NextResponse.json({ projects: items, total, totalPages, page });
+    }
+
     projects.sort((a, b) => b.imageCount - a.imageCount);
 
     const total      = projects.length;
@@ -214,6 +293,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ projects: items, total, totalPages, page });
   } catch (err) {
     console.error("Portfolio projects error:", err);
-    return NextResponse.json({ projects: [], total: 0, totalPages: 0, page: 1 }, { status: 500 });
+    return NextResponse.json({ projects: FALLBACK_PROJECTS, total: FALLBACK_PROJECTS.length, totalPages: 1, page: 1 });
   }
 }

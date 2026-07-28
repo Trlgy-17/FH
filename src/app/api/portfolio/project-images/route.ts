@@ -26,11 +26,39 @@ export interface ProjectImage {
   filename: string;
 }
 
+const FALLBACK_IMAGES: Record<string, string[]> = {
+  "fallback-kitchen-set-minimalis": [
+    "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop",
+  ],
+  "fallback-wardrobe-semiklasik": [
+    "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1558882224-dda166733046?q=80&w=1200&auto=format&fit=crop",
+  ],
+  "default": [
+    "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=1200&auto=format&fit=crop",
+  ],
+};
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const encodedId = searchParams.get("id");
 
   if (!encodedId) return NextResponse.json({ images: [] }, { status: 400 });
+
+  if (encodedId.startsWith("fallback-") || !fs.existsSync(KONTEN_ROOT)) {
+    const list = FALLBACK_IMAGES[encodedId] ?? FALLBACK_IMAGES["default"];
+    const images: ProjectImage[] = list.map((url, idx) => ({
+      id: `img-${idx}`,
+      src: url,
+      filename: `Foto Dokumentasi ${idx + 1}.jpg`,
+    }));
+    return NextResponse.json({ images, total: images.length });
+  }
 
   try {
     const projPath = Buffer.from(encodedId, "base64url").toString("utf-8");
