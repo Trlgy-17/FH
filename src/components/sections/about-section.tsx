@@ -15,7 +15,7 @@ export function AboutSection() {
                 {/* Inner Core */}
                 <div className="relative aspect-[4/3] md:aspect-[14/10] w-full rounded-[calc(1.5rem-0.25rem)] overflow-hidden bg-muted border border-foreground/5">
                   <Image
-                    src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200&auto=format&fit=crop"
+                    src="/images/about-home.png"
                     alt="Filosofi desain interior FULLHOME ID"
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
