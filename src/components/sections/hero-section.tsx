@@ -76,8 +76,8 @@ export function HeroSection() {
               {/* Inner Core Container (Bezel 2) */}
               <div className="relative aspect-[4/3] sm:aspect-[16/11] lg:aspect-[4/5] w-full rounded-[calc(2.5rem-0.75rem)] overflow-hidden bg-muted border border-foreground/10">
                 <Image
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnf7IHhlnFt4MEJ4OmsbMm7TPs4KNZ42RdsDmkqPAFMYMUY-skbw070g2Gkxd7at73Ezs-E1tw1IQfQVsBqLGbPK2BdyDIhlAQ58-wXYfxSuFtEgXqGC_ZYvLJVS-vEE3TjaKjgCd05I2ZOYfWQELfMuEoPP_QnUAzDDGYjoW-8otjTufT5JZkRW1y-6gxu-kbgl4meu11BVviBlvmOCo7O_F_em2OJpuIA2bWxZVnptdgkiDt-MfVeOz1EKcy0u57PcFo3BTGoEbc"
-                  alt="Dokumentasi Interior Warm Minimal Luxury FULLHOME ID"
+                  src="/images/hero-luxury-living-room.jpg"
+                  alt="Dokumentasi Interior Luxury Living Room FULLHOME ID"
                   fill
                   priority
                   loading="eager"
