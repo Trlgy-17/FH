@@ -76,8 +76,8 @@ export function HeroSection() {
               {/* Inner Core Container (Bezel 2) */}
               <div className="relative aspect-[4/3] sm:aspect-[16/11] lg:aspect-[4/5] w-full rounded-[calc(2.5rem-0.75rem)] overflow-hidden bg-muted border border-foreground/10">
                 <Image
-                  src="/images/hero-luxury-living-room.jpg"
-                  alt="Dokumentasi Interior Luxury Living Room FULLHOME ID"
+                  src="/images/hero-home.png"
+                  alt="Dokumentasi Interior FULLHOME ID"
                   fill
                   priority
                   loading="eager"
