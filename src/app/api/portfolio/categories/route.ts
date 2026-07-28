@@ -5,13 +5,11 @@ import path from "path";
 const LOCAL_KONTEN = path.join(process.cwd(), "Portofolio", "FULLHOME");
 const EXTERNAL_KONTEN = "F:\\KONTEN";
 
-// WHITELIST: maps raw folder names to clean display labels
+// WHITELIST: maps raw folder names to clean display labels (Excludes BEFORE-AFTER)
 export const CATEGORY_MAP: Record<string, string> = {
   "APARTEMEN": "Apartemen",
   "BACDROP TV": "Backdrop TV",
   "BEDROOM": "Bedroom",
-  "BEFORE-AFTER": "Before & After",
-  "Before after": "Before & After",
   "INTERIOR TOKO": "Interior Toko",
   "KITCHENSET": "Kitchen Set",
   "LEMARI BAWAH TANGGA": "Lemari Bawah Tangga",
@@ -43,7 +41,6 @@ const FALLBACK_CATEGORIES: PortfolioCategory[] = [
   { id: "apartemen", label: "Apartemen", count: 19 },
   { id: "lemari-bawah-tangga", label: "Lemari Bawah Tangga", count: 22 },
   { id: "interior-toko", label: "Interior Toko", count: 14 },
-  { id: "before-after", label: "Before & After", count: 10 },
 ];
 
 export function normalizeCat(raw: string): string {
@@ -215,7 +212,7 @@ export async function GET() {
 
     const categories: PortfolioCategory[] = Array.from(catMap.entries())
       .map(([id, { label, count }]) => ({ id, label, count }))
-      .filter((c) => c.count > 0)
+      .filter((c) => c.count > 0 && c.id !== "before-after")
       .sort((a, b) => b.count - a.count);
 
     return NextResponse.json({
