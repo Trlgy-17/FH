@@ -13,20 +13,25 @@ export function HeroSection() {
           <Reveal direction="down">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-mono tracking-widest uppercase text-warm-gray bg-black/5 dark:bg-white/5 border border-foreground/10 w-fit backdrop-blur-md">
               <Sparkles className="w-3.5 h-3.5 text-secondary" />
-              <span>INTERIOR STUDIO & CUSTOM FURNITURE</span>
+              <span>JASA DESAIN INTERIOR & CUSTOM FURNITURE</span>
             </div>
           </Reveal>
 
           <Reveal delay={0.1}>
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-primary font-medium leading-[1.08] tracking-tight">
-              Ruang Yang Dirancang Khusus <br className="hidden sm:block" />
-              <span className="italic font-normal text-secondary">Untuk Jiwa & Karakter</span> Anda.
-            </h1>
+            <div className="flex flex-col gap-3">
+              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-primary font-medium leading-[1.08] tracking-tight">
+                Jasa Interior Custom Bergaransi <br className="hidden sm:block" />
+                <span className="italic font-normal text-secondary">Dirancang Khusus untuk</span> Hunian Anda.
+              </h1>
+              <p className="font-serif italic text-lg sm:text-xl text-secondary font-normal tracking-wide">
+                Presisi dalam Fungsi, Estetika, dan Anggaran.
+              </p>
+            </div>
           </Reveal>
 
           <Reveal delay={0.2}>
             <p className="font-sans text-base sm:text-lg text-warm-gray leading-relaxed max-w-xl">
-              FULLHOME ID menghadirkan solusi interior custom presisi tinggi — menggabungkan fungsi, estetika Warm Minimal Luxury, dan transparansi anggaran RAB dari awal hingga pengerjaan selesai.
+              FULLHOME ID menghadirkan solusi desain interior dan custom furniture bergaransi yang dirancang khusus sesuai kebutuhan, karakter, dan budget Anda. Mulai dari kitchen set, kamar tidur, wardrobe, hingga interior rumah secara menyeluruh, setiap proyek dikerjakan secara presisi dengan RAB transparan dan proses yang terpantau dari tahap desain hingga instalasi.
             </p>
           </Reveal>
 
