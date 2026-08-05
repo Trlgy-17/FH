@@ -29,7 +29,7 @@ const trustPillars = [
     badge: "TRANSPARANSI",
     title: "Estimasi Jujur & Garansi",
     description:
-      "Perhitungan Rencana Anggaran Biaya (RAB) jelas tanpa hidden cost, didukung garansi garansi garansi pemeliharaan.",
+      "Perhitungan Rencana Anggaran Biaya (RAB) jelas tanpa hidden cost, didukung garansi pemeliharaan.",
   },
 ];
 
@@ -40,7 +40,7 @@ export function TrustSection() {
         <Reveal>
           <SectionHeading
             eyebrow="PENDEKATAN KAMI"
-            title="Mengapa Dipercaya Ratusan Klien?"
+            title="Mengapa Dipercaya Ribuan Klien?"
             subtitle="Kami percaya interior rumah bukan sekadar susunan perabot, melainkan sanctuary tempat cerita kehidupan bermula."
           />
         </Reveal>

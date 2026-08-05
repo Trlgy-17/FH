@@ -143,7 +143,7 @@ export default function PortfolioPage() {
             transition={{ delay: 0.14 }}
             className="font-sans text-warm-gray max-w-lg mx-auto text-xs md:text-sm leading-relaxed"
           >
-            Ratusan hasil dokumentasi pengerjaan interior kustom asli dari klien FULLHOME ID di Jabodetabek, Jawa & Bali.
+            Ribuan hasil dokumentasi pengerjaan interior kustom asli dari klien FULLHOME ID di Jabodetabek, Jawa & Bali.
           </motion.p>
 
           {/* Stats Bar */}
