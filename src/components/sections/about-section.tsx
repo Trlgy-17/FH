@@ -76,16 +76,16 @@ export function AboutSection() {
                     sizes="(max-width: 1024px) 100vw, 40vw"
                     className="object-cover transition-transform duration-700 hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
                 </div>
               </div>
 
-              {/* Floating Quote Card */}
-              <div className="absolute -bottom-5 -right-2 sm:-right-4 bg-background p-4 sm:p-5 rounded-2xl shadow-xl border border-foreground/15 max-w-xs z-20">
-                <p className="font-serif text-xs sm:text-sm italic text-primary leading-snug mb-2">
+              {/* Floating Quote Badge with High-Contrast Solid White Text */}
+              <div className="absolute -bottom-5 -right-2 sm:-right-4 bg-black/80 backdrop-blur-xl p-4 sm:p-5 rounded-2xl shadow-2xl border border-white/20 max-w-xs z-20">
+                <p className="font-serif text-xs sm:text-sm italic text-white leading-snug mb-2 font-medium">
                   &ldquo;Rumah harus menjadi sanctuary tempat tubuh dan pikiran beristirahat.&rdquo;
                 </p>
-                <span className="font-sans text-[10px] font-mono tracking-wider text-warm-gray uppercase">
+                <span className="font-sans text-[10px] font-mono tracking-wider text-white/90 uppercase font-semibold">
                   — TIM DESAIN FULLHOME ID
                 </span>
               </div>
