@@ -6,7 +6,6 @@ import { X, MessageCircle } from "lucide-react";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
 import Image from "next/image";
 
 interface MobileNavProps {
@@ -44,11 +43,11 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
   const waLink = buildWhatsAppLink();
 
   return (
-    <div className="fixed inset-0 z-50 md:hidden flex flex-col bg-background/98 backdrop-blur-xl transition-all duration-300">
+    <div className="fixed inset-0 z-[100] md:hidden flex flex-col bg-white transition-all duration-300">
       {/* Top bar inside drawer */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-light-taupe/30">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-foreground/10 bg-white">
         <div className="flex items-center gap-3">
-          <div className="relative w-9 h-9 rounded-full overflow-hidden border border-light-taupe/60 bg-soft-white/90 shadow-xs shrink-0">
+          <div className="relative w-9 h-9 rounded-full overflow-hidden border border-foreground/15 bg-white shadow-xs shrink-0">
             <Image
               src="/logo-v3.png"
               alt="FULLHOME ID Logo"
@@ -65,20 +64,20 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
           type="button"
           onClick={onClose}
           aria-label="Tutup Menu"
-          className="p-2 text-primary hover:text-secondary focus:outline-none focus:ring-2 focus:ring-secondary rounded-full"
+          className="p-2 text-primary hover:text-secondary focus:outline-none rounded-full bg-black/5"
         >
           <X className="w-6 h-6" />
         </button>
       </div>
 
       {/* Nav Links */}
-      <nav className="flex-1 px-6 py-8 flex flex-col gap-6 overflow-y-auto">
+      <nav className="flex-1 px-6 py-8 flex flex-col gap-6 overflow-y-auto bg-white">
         {siteConfig.mainNav.map((item) => (
           <Link
             key={item.label}
             href={resolveHref(item.href)}
             onClick={onClose}
-            className="font-serif text-2xl text-primary hover:text-secondary transition-colors border-b border-light-taupe/20 pb-3"
+            className="font-serif text-2xl text-primary hover:text-secondary transition-colors border-b border-foreground/10 pb-3"
           >
             {item.label}
           </Link>
@@ -86,19 +85,19 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
       </nav>
 
       {/* Footer CTA */}
-      <div className="p-6 border-t border-light-taupe/30 flex flex-col gap-4">
+      <div className="p-6 border-t border-foreground/10 flex flex-col gap-4 bg-white">
         <a
           href={waLink}
           target="_blank"
           rel="noopener noreferrer"
           onClick={onClose}
-          className="w-full bg-primary text-soft-white py-4 rounded-full font-sans font-semibold text-sm hover:bg-secondary transition-all flex items-center justify-center gap-2.5 shadow-md"
+          className="w-full bg-primary text-white py-4 rounded-full font-sans font-semibold text-sm hover:bg-secondary transition-all flex items-center justify-center gap-2.5 shadow-md"
         >
           <MessageCircle className="w-5 h-5" />
           <span>Konsultasi WhatsApp</span>
         </a>
         <p className="font-sans text-xs text-warm-gray text-center">
-          Editorial Minimalism in Interior Design
+          Warm Minimal Luxury Studio
         </p>
       </div>
     </div>
