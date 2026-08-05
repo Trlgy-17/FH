@@ -63,7 +63,7 @@ export function AboutSection() {
         {/* Main Split: Image & Story */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           {/* Double-Bezel Image Showcase */}
-          <div className="lg:col-span-5 relative sticky top-24">
+          <div className="lg:col-span-5 relative lg:sticky lg:top-28 mb-6 lg:mb-0">
             <Reveal direction="right">
               {/* Outer Shell */}
               <div className="p-2.5 rounded-3xl bg-black/5 dark:bg-white/5 border border-foreground/10 shadow-xl">
@@ -76,24 +76,24 @@ export function AboutSection() {
                     sizes="(max-width: 1024px) 100vw, 40vw"
                     className="object-cover transition-transform duration-700 hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
-                </div>
-              </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
 
-              {/* Floating Quote Badge with High-Contrast Solid White Text */}
-              <div className="absolute -bottom-5 -right-2 sm:-right-4 bg-black/80 backdrop-blur-xl p-4 sm:p-5 rounded-2xl shadow-2xl border border-white/20 max-w-xs z-20">
-                <p className="font-serif text-xs sm:text-sm italic text-white leading-snug mb-2 font-medium">
-                  &ldquo;Rumah harus menjadi sanctuary tempat tubuh dan pikiran beristirahat.&rdquo;
-                </p>
-                <span className="font-sans text-[10px] font-mono tracking-wider text-white/90 uppercase font-semibold">
-                  — TIM DESAIN FULLHOME ID
-                </span>
+                  {/* Floating Quote Badge inside on mobile, offset on desktop */}
+                  <div className="absolute bottom-3 right-3 sm:-bottom-5 sm:-right-4 bg-black/85 backdrop-blur-xl p-4 sm:p-5 rounded-2xl shadow-2xl border border-white/20 max-w-[88%] sm:max-w-xs z-10">
+                    <p className="font-serif text-xs sm:text-sm italic text-white leading-snug mb-2 font-medium">
+                      &ldquo;Rumah harus menjadi sanctuary tempat tubuh dan pikiran beristirahat.&rdquo;
+                    </p>
+                    <span className="font-sans text-[10px] font-mono tracking-wider text-white/90 uppercase font-semibold">
+                      — TIM DESAIN FULLHOME ID
+                    </span>
+                  </div>
+                </div>
               </div>
             </Reveal>
           </div>
 
           {/* Text Content */}
-          <div className="lg:col-span-7 flex flex-col gap-6">
+          <div className="lg:col-span-7 flex flex-col gap-6 pt-4 lg:pt-0">
             <Reveal delay={0.1}>
               <h2 className="font-serif text-3xl md:text-5xl text-primary font-medium leading-[1.12] tracking-tight">
                 Menciptakan Ruang yang{" "}
