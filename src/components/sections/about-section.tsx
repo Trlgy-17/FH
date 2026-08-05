@@ -76,12 +76,12 @@ export function AboutSection() {
                     sizes="(max-width: 1024px) 100vw, 40vw"
                     className="object-cover transition-transform duration-700 hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
                 </div>
               </div>
 
-              {/* Floating Quote Badge */}
-              <div className="absolute -bottom-5 -right-2 sm:-right-4 bg-background/90 backdrop-blur-xl p-4 sm:p-5 rounded-2xl shadow-2xl border border-foreground/15 max-w-xs z-20">
+              {/* Floating Quote Card */}
+              <div className="absolute -bottom-5 -right-2 sm:-right-4 bg-background p-4 sm:p-5 rounded-2xl shadow-xl border border-foreground/15 max-w-xs z-20">
                 <p className="font-serif text-xs sm:text-sm italic text-primary leading-snug mb-2">
                   &ldquo;Rumah harus menjadi sanctuary tempat tubuh dan pikiran beristirahat.&rdquo;
                 </p>
@@ -94,12 +94,6 @@ export function AboutSection() {
 
           {/* Text Content */}
           <div className="lg:col-span-7 flex flex-col gap-6">
-            <Reveal>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono tracking-widest uppercase text-warm-gray bg-black/5 dark:bg-white/5 border border-foreground/10 w-fit backdrop-blur-md">
-                <span>TENTANG STUDIO KAMI</span>
-              </div>
-            </Reveal>
-
             <Reveal delay={0.1}>
               <h2 className="font-serif text-3xl md:text-5xl text-primary font-medium leading-[1.12] tracking-tight">
                 Menciptakan Ruang yang{" "}
