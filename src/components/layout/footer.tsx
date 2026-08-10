@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { siteConfig } from "@/config/site";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, MapPin } from "lucide-react";
 import Link from "next/link";
 
 export function Footer() {
@@ -11,7 +11,7 @@ export function Footer() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-10 pb-16 border-b border-foreground/10">
           {/* Brand Column */}
-          <div className="md:col-span-5 flex flex-col gap-4">
+          <div className="md:col-span-4 flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-3 w-fit group">
               <div className="relative w-10 h-10 rounded-full overflow-hidden border border-foreground/15 bg-white shadow-xs shrink-0 group-hover:scale-105 transition-all">
                 <Image
@@ -52,20 +52,37 @@ export function Footer() {
             ))}
           </div>
 
-          {/* Area & Social Column */}
-          <div className="md:col-span-4 flex flex-col gap-3">
+          {/* Area, Address & Social Column */}
+          <div className="md:col-span-5 flex flex-col gap-3">
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] font-semibold text-warm-gray mb-1">
-              AREA OPERASIONAL & KONTAK
+              LOKASI STUDIO & KONTAK
             </span>
-            <p className="font-sans text-xs md:text-sm text-warm-gray">
-              Area Layanan Utama: <span className="text-primary font-semibold">Jabodetabek, Pulau Jawa & Bali</span>
-            </p>
+            <div className="flex items-start gap-2 text-xs md:text-sm text-warm-gray">
+              <MapPin className="w-4 h-4 text-secondary shrink-0 mt-0.5" />
+              <div className="flex flex-col gap-1">
+                <span className="text-primary font-medium leading-snug">
+                  {siteConfig.address}
+                </span>
+                <span className="font-mono text-[11px] text-secondary tracking-wider">
+                  Plus Code: {siteConfig.plusCode}
+                </span>
+              </div>
+            </div>
             <div className="flex flex-col gap-2 pt-2">
+              <a
+                href={siteConfig.googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs md:text-sm font-medium text-secondary hover:text-primary transition-colors w-fit"
+              >
+                <span>Petunjuk Arah Google Maps</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </a>
               <a
                 href={siteConfig.social.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs md:text-sm font-medium text-secondary hover:text-primary transition-colors w-fit"
+                className="inline-flex items-center gap-1.5 text-xs md:text-sm font-medium text-warm-gray hover:text-primary transition-colors w-fit"
               >
                 <span>WhatsApp Official Studio</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
@@ -76,7 +93,7 @@ export function Footer() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-xs md:text-sm font-medium text-warm-gray hover:text-primary transition-colors w-fit"
               >
-                <span>Instagram Dokumentasi @fullhome.id</span>
+                <span>Instagram @fullhome.id</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </a>
             </div>
