@@ -55,7 +55,7 @@ export function Footer() {
           {/* Area, Address & Social Column */}
           <div className="md:col-span-5 flex flex-col gap-3">
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] font-semibold text-warm-gray mb-1">
-              LOKASI STUDIO & KONTAK
+              LOKASI OFFICE & KONTAK
             </span>
             <div className="flex items-start gap-2 text-xs md:text-sm text-warm-gray">
               <MapPin className="w-4 h-4 text-secondary shrink-0 mt-0.5" />

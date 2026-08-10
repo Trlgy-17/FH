@@ -11,9 +11,9 @@ export function LocationSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8">
         <Reveal>
           <SectionHeading
-            eyebrow="LOKASI STUDIO & WORKSHOP"
-            title="Kunjungi Workshop Kami"
-            subtitle="Temukan workshop dan studio kami di Bandung Barat untuk berdiskusi langsung mengenai sampel material dan konsep interior impian Anda."
+            eyebrow="LOKASI OFFICE"
+            title="Kunjungi Office Kami"
+            subtitle="Temukan office kami di Bandung Barat untuk berdiskusi langsung mengenai sampel material dan konsep interior impian Anda."
           />
         </Reveal>
 
@@ -37,7 +37,7 @@ export function LocationSection() {
                       </div>
                       <div>
                         <h4 className="font-serif text-lg font-medium text-primary mb-1">
-                          Alamat Studio & Workshop
+                          Alamat Office
                         </h4>
                         <p className="font-sans text-xs md:text-sm text-warm-gray leading-relaxed">
                           {siteConfig.address}
@@ -52,7 +52,7 @@ export function LocationSection() {
                       </div>
                       <div>
                         <h4 className="font-serif text-lg font-medium text-primary mb-1">
-                          Jam Operasional Studio
+                          Jam Operasional Office
                         </h4>
                         <p className="font-sans text-xs md:text-sm text-warm-gray leading-relaxed">
                           Senin – Sabtu: 08:00 – 17:00 WIB
@@ -90,7 +90,7 @@ export function LocationSection() {
               <div className="p-2.5 rounded-3xl bg-black/5 dark:bg-white/5 border border-foreground/10 shadow-xl h-full w-full">
                 <div className="relative w-full h-full min-h-[360px] lg:min-h-[440px] rounded-[calc(1.5rem-0.25rem)] overflow-hidden bg-muted border border-foreground/5 shadow-xs">
                   <iframe
-                    title="Peta Lokasi FULLHOME ID Studio"
+                    title="Peta Lokasi FULLHOME ID Office"
                     src={mapEmbedUrl}
                     width="100%"
                     height="100%"

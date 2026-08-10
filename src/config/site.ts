@@ -22,6 +22,6 @@ export const siteConfig = {
     { label: "Proses", href: "#process" },
     { label: "Tentang Kami", href: "#about" },
     { label: "FAQ", href: "#faq" },
-    { label: "Lokasi Studio", href: "#location" },
+    { label: "Lokasi Office", href: "#location" },
   ],
 };
