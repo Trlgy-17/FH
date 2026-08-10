@@ -2,11 +2,18 @@ import { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
 
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = siteConfig.url.endsWith("/")
+    ? siteConfig.url.slice(0, -1)
+    : siteConfig.url;
+
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-    },
-    sitemap: `${siteConfig.url}/sitemap.xml`,
+    rules: [
+      {
+        userAgent: "*",
+        allow: ["/", "/portofolio"],
+        disallow: ["/api/contact"],
+      },
+    ],
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }
